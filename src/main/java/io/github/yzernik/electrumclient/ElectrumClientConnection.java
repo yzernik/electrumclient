@@ -31,7 +31,6 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
     }
 
     private void sendNewLine(OutputStream outputStream) throws IOException {
-        // out.println();
         outputStream.write("\n".getBytes());
         outputStream.flush();
     }
