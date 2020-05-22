@@ -7,54 +7,41 @@ import java.net.UnknownHostException;
 import java.util.stream.Stream;
 
 public class ElectrumClient {
-    private Socket clientSocket;
     private OutputStream clientOutputStream;
     private PrintWriter out;
     private BufferedReader in;
 
-    private InetAddress address;
-    private int port;
+    private final InetAddress address;
+    private final int port;
 
     public ElectrumClient(String host, int port) throws UnknownHostException {
         this.address = AddressLookup.getInetAddress(host);
         this.port = port;
     }
 
-    public ElectrumClient(InetAddress address, int port) {
-        this.address = address;
-        this.port = port;
-    }
-
     public void start() throws IOException {
-        clientSocket = new Socket(address, port);
+        Socket clientSocket = new Socket(address, port);
         clientOutputStream = clientSocket.getOutputStream();
         out = new PrintWriter(clientOutputStream, true);
         InputStream socketInputStream = clientSocket.getInputStream();
         in = new BufferedReader(new InputStreamReader(socketInputStream));
     }
 
-    public void sendMessage(String msg) throws IOException {
+    public void sendMessage(String msg) {
         out.println(msg);
-        //String resp = in.readLine();
     }
 
-    public void sendNewLine() throws IOException {
+    public void sendNewLine() {
         out.println();
     }
 
-    public void stopConnection() throws IOException {
-        in.close();
-        out.close();
-        clientSocket.close();
-    }
-
-    public void sendSubscribeMessage() throws IOException {
+    public void sendSubscribeMessage() {
         String subscribeMessage = "{ \"id\": \"blk\", \"method\": \"blockchain.headers.subscribe\"}";
         System.out.println(subscribeMessage);
         sendMessage(subscribeMessage);
     }
 
-    public void sendGetBlockHeaderMessage() throws IOException {
+    public void sendGetBlockHeaderMessage() {
         String getBlockHeaderMessage = "{\"id\":\"1538775738\",\"jsonrpc\":\"2.0\",\"method\":\"blockchain.block.header\",\"params\":[23]}";
         System.out.println(getBlockHeaderMessage);
         sendMessage(getBlockHeaderMessage);
@@ -80,16 +67,11 @@ public class ElectrumClient {
         sendNewLine();
     }
 
-    public Stream<String> getResponseLines() throws IOException {
-        // sendSubscribeMessage();
-
-        //read file into stream, try-with-resources
+    public Stream<String> getResponseLines() {
         return in.lines();
     }
 
     public String getResponseLine() throws IOException {
-        // sendGetBlockHeaderMessage();
-
         return in.readLine();
     }
 

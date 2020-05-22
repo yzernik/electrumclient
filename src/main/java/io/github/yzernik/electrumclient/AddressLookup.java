@@ -15,7 +15,7 @@ public class AddressLookup {
         // Get ip6 address if available
         for (InetAddress addr : addresses) {
             if (addr instanceof Inet6Address) {
-                return (Inet6Address) addr;
+                return addr;
             }
         }
 
