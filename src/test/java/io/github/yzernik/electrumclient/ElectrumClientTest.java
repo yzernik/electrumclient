@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.stream.Stream;
 
 
@@ -101,19 +102,15 @@ public class ElectrumClientTest {
         assert currentBlockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
     }
 
-    /*
-    @Test
+
+    @Test(expected = IOException.class)
     public void getBlockHeaderWithConnectionClassBadServer() throws Exception {
         GetHeaderClientConnection clientConnection = new GetHeaderClientConnection("foooooooo", ELECTRUM_PORT);
 
         Thread t =new Thread(clientConnection);
         t.start();
 
-        ElectrumClientSingleLineResponse response = clientConnection.getResult();
-        String blockString = response.getLine();
-
-        System.out.println(blockString);
-        assert blockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
-    }*/
+        clientConnection.getResult();
+    }
 
 }
