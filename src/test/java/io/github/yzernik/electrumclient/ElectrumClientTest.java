@@ -9,6 +9,9 @@ import java.util.stream.Stream;
 
 public class ElectrumClientTest {
 
+    private static final String ELECTRUM_HOST = "currentlane.lovebitco.in";
+    private static final int ELECTRUM_PORT = 50001;
+
     @Before
     public void setup() {
         // Nothing
@@ -21,7 +24,7 @@ public class ElectrumClientTest {
 
     @Test
     public void getBlockHeader() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient("currentlane.lovebitco.in", 50001);
+        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         electrumClient.start();
 
         electrumClient.sendGetBlockHeaderMessage();
@@ -33,7 +36,7 @@ public class ElectrumClientTest {
 
     @Test
     public void getBlockHeaderWithRPCClient() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient("currentlane.lovebitco.in", 50001);
+        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         electrumClient.start();
 
         electrumClient.sendGetBlockHeaderMessageWithRPCClient();
@@ -45,7 +48,7 @@ public class ElectrumClientTest {
 
     @Test
     public void subscribeBlockHeaders() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient("currentlane.lovebitco.in", 50001);
+        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         electrumClient.start();
 
         electrumClient.sendSubscribeMessage();
@@ -57,7 +60,7 @@ public class ElectrumClientTest {
 
     @Test
     public void subscribeBlockHeadersWithRPCClient() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient("currentlane.lovebitco.in", 50001);
+        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         electrumClient.start();
 
         electrumClient.sendSubscribeMessageWithRPCClient();
@@ -70,7 +73,7 @@ public class ElectrumClientTest {
     @Test
     public void getBlockHeaderWithConnectionClass() throws Exception {
         ElectrumClientConnection<ElectrumClientSingleLineResponse> clientConnection
-                = new GetHeaderClientConnection("currentlane.lovebitco.in", 50001);
+                = new GetHeaderClientConnection(ELECTRUM_HOST, ELECTRUM_PORT);
 
         ElectrumClientSingleLineResponse response = clientConnection.makeRequest();
         String blockString = response.getLine();
@@ -83,10 +86,12 @@ public class ElectrumClientTest {
     @Test
     public void subscribeBlockHeadersWithConnectionClass() throws Exception {
         ElectrumClientConnection<ElectrumClientMultiLineResponse> clientConnection
-                = new SubscribeHeadersClientConnection("currentlane.lovebitco.in", 50001);
+                = new SubscribeHeadersClientConnection(ELECTRUM_HOST, ELECTRUM_PORT);
 
         ElectrumClientMultiLineResponse response = clientConnection.makeRequest();
         Stream<String> blockStringStream = response.getLines();
+        System.err.println("Finding first block string from stream...");
+
         String firstBlockString = blockStringStream.findFirst().get();
 
         System.out.println(firstBlockString);
