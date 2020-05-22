@@ -74,7 +74,8 @@ public class ElectrumClientTest {
     public void getBlockHeaderWithConnectionClass() throws Exception {
         GetHeaderClientConnection clientConnection = new GetHeaderClientConnection(ELECTRUM_HOST, ELECTRUM_PORT);
 
-        ElectrumClientSingleLineResponse response = clientConnection.makeRequest();
+        clientConnection.makeRequest();
+        ElectrumClientSingleLineResponse response = clientConnection.getResult();
         String blockString = response.getLine();
 
         System.out.println(blockString);
@@ -86,7 +87,8 @@ public class ElectrumClientTest {
     public void subscribeBlockHeadersWithConnectionClass() throws Exception {
         SubscribeHeadersClientConnection clientConnection = new SubscribeHeadersClientConnection(ELECTRUM_HOST, ELECTRUM_PORT);
 
-        ElectrumClientMultiLineResponse response = clientConnection.makeRequest();
+        clientConnection.makeRequest();
+        ElectrumClientMultiLineResponse response = clientConnection.getResult();
         Stream<String> blockStringStream = response.getLines();
         String currentBlockString = blockStringStream.findFirst().get();
 

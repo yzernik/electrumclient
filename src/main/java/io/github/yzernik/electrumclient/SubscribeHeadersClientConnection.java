@@ -22,4 +22,5 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
         Stream<String> lines = in.lines();
         return new ElectrumClientMultiLineResponse(lines);
     }
+
 }

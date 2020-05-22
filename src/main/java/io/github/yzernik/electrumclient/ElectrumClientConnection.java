@@ -7,27 +7,55 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
+abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implements Runnable {
 
     private String host;
     private int port;
+    private ThreadResult threadResult = null;
 
     public ElectrumClientConnection(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
-    public T makeRequest() throws IOException {
-        InetAddress address = AddressLookup.getInetAddress(host);
-        try(
-                Socket clientSocket = new Socket(address, port);
-                OutputStream clientOutputStream = clientSocket.getOutputStream();
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        ) {
-            return makeRequest(clientOutputStream, in);
+
+    @Override
+    public void run() {
+        makeRequest();
+    }
+
+    public void makeRequest() {
+        try {
+            InetAddress address = AddressLookup.getInetAddress(host);
+            try(
+                    Socket clientSocket = new Socket(address, port);
+                    OutputStream clientOutputStream = clientSocket.getOutputStream();
+                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            ) {
+                // ElectrumClientResponse response = makeRequest(clientOutputStream, in);
+                T result = makeRequest(clientOutputStream, in);
+                threadResult = new ThreadResult(result, null);
+                // Wake up threads blocked on the getResult() method
+                synchronized(this) {
+                    notifyAll();
+                }
+
+                // TODO: Wait until result is closed.
+                try {
+                    waitForResultClose();
+                } catch (IOException closeExeption) {
+                    // Do nothing.
+                }
+            }
         } catch (IOException e) {
-            throw e;
+            e.printStackTrace();
+            threadResult = new ThreadResult(null, e);
+        } finally {
+            synchronized(this) {
+                notifyAll();
+            }
         }
+
     }
 
     private void sendNewLine(OutputStream outputStream) throws IOException {
@@ -44,5 +72,45 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
     abstract void sendRPCRequest(OutputStream outputStream) throws IOException;
 
     abstract T getResponse(BufferedReader in) throws IOException;
+
+    /**
+     * Get the result of the connection request.
+     * @return
+     * @throws InterruptedException
+     */
+    public T getResult() throws InterruptedException, IOException {
+        while (threadResult == null)
+            wait();
+
+        if (threadResult.getException() != null) {
+            throw threadResult.getException();
+        }
+
+        return threadResult.getResult();
+    }
+
+    private void waitForResultClose() throws IOException {
+        // TODO
+        System.out.println("Waiting for result to close...");
+        System.out.println("Result closed.");
+    }
+
+    public class ThreadResult {
+        private T result;
+        private IOException exception;
+
+        public ThreadResult(T result, IOException exception) {
+            this.result = result;
+            this.exception = exception;
+        }
+
+        public T getResult() {
+            return result;
+        }
+
+        public IOException getException() {
+            return exception;
+        }
+    }
 
 }
