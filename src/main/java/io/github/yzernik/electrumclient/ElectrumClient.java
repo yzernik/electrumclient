@@ -52,7 +52,7 @@ public class ElectrumClient {
     }
 
     public void sendGetBlockHeaderMessage() throws IOException {
-        String getBlockHeaderMessage = "{ \"id\": \"blk\", \"method\": \"blockchain.block.header\", \"params\": [23]}";
+        String getBlockHeaderMessage = "{ \"id\": \"1538775738\", \"jsonrpc\":\"2.0\", \"method\": \"blockchain.block.header\", \"params\": [23]}";
         System.out.println(getBlockHeaderMessage);
         sendMessage(getBlockHeaderMessage);
     }
@@ -105,7 +105,7 @@ public class ElectrumClient {
     }
 
     public String getResponseLine() throws IOException {
-        sendGetBlockHeaderMessage();
+        // sendGetBlockHeaderMessage();
 
         return in.readLine();
     }
