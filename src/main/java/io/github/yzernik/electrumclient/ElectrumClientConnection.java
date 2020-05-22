@@ -8,11 +8,6 @@ import java.net.UnknownHostException;
 
 abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
 
-    private Socket clientSocket;
-    private OutputStream clientOutputStream;
-    private PrintWriter out;
-    private BufferedReader in;
-
     private InetAddress address;
     private int port;
 
@@ -26,34 +21,32 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
         this.port = port;
     }
 
-    public void start() throws IOException {
-        clientSocket = new Socket(address, port);
-        clientOutputStream = clientSocket.getOutputStream();
-        out = new PrintWriter(clientOutputStream, true);
-        InputStream socketInputStream = clientSocket.getInputStream();
-        in = new BufferedReader(new InputStreamReader(socketInputStream));
+    public T makeRequest() throws IOException {
+        try(
+                Socket clientSocket = new Socket(address, port);
+                OutputStream clientOutputStream = clientSocket.getOutputStream();
+                PrintWriter out = new PrintWriter(clientOutputStream, true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        ) {
+            return makeRequest(clientOutputStream, out, in);
+        } catch (IOException e) {
+            throw e;
+        }
     }
 
-    private void sendNewLine() throws IOException {
+    private void sendNewLine(PrintWriter out) throws IOException {
         out.println();
     }
 
-    public void stopConnection() throws IOException {
-        in.close();
-        out.close();
-        clientSocket.close();
+    public T makeRequest(OutputStream outputStream, PrintWriter out, BufferedReader in) throws IOException {
+        sendRPCRequest(outputStream);
+        sendNewLine(out);
+        return getResponse(in);
     }
 
-    public T makeRequest() throws IOException {
-        start();
-        sendRPCRequest();
-        sendNewLine();
-        return getResponse();
-    }
+    abstract void sendRPCRequest(OutputStream outputStream) throws IOException;
 
-    abstract void sendRPCRequest() throws IOException;
-
-    abstract T getResponse() throws IOException;
+    abstract T getResponse(BufferedReader in) throws IOException;
 
     public static InetAddress selectAddress(InetAddress[] addresses) {
         // Get ip6 address if available
@@ -74,14 +67,6 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
     public static InetAddress getInetAddress(String host) throws UnknownHostException {
         InetAddress[] addresses = InetAddress.getAllByName(host);
         return selectAddress(addresses);
-    }
-
-    public OutputStream getClientOutputStream() {
-        return clientOutputStream;
-    }
-
-    public BufferedReader getIn() {
-        return in;
     }
 
 }
