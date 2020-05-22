@@ -29,7 +29,6 @@ public class ElectrumClientMultiLineResponse implements ElectrumClientResponse{
                 wait();
             } catch (InterruptedException e)  {
                 Thread.currentThread().interrupt();
-                System.err.println("Thread interrupted: " + e);
             }
         }
         return;

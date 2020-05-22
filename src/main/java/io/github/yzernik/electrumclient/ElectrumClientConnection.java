@@ -35,17 +35,15 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
                 // ElectrumClientResponse response = makeRequest(clientOutputStream, in);
                 T result = makeRequest(clientOutputStream, in);
                 threadResult = new ThreadResult(result, null);
+
                 // Wake up threads blocked on the getResult() method
                 synchronized(this) {
                     notifyAll();
                 }
 
                 // TODO: Wait until result is closed.
-                try {
-                    waitForResultClose();
-                } catch (IOException closeExeption) {
-                    // Do nothing.
-                }
+                waitForResultClose(result);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,7 +76,7 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
      * @return
      * @throws InterruptedException
      */
-    public T getResult() throws InterruptedException, IOException {
+    public synchronized T getResult() throws InterruptedException, IOException {
         while (threadResult == null)
             wait();
 
@@ -89,10 +87,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
         return threadResult.getResult();
     }
 
-    private void waitForResultClose() throws IOException {
-        // TODO
-        System.out.println("Waiting for result to close...");
-        System.out.println("Result closed.");
+    private void waitForResultClose(T result) {
+        result.waitUntilComplete();
     }
 
     public class ThreadResult {

@@ -74,7 +74,9 @@ public class ElectrumClientTest {
     public void getBlockHeaderWithConnectionClass() throws Exception {
         GetHeaderClientConnection clientConnection = new GetHeaderClientConnection(ELECTRUM_HOST, ELECTRUM_PORT);
 
-        clientConnection.makeRequest();
+        Thread t =new Thread(clientConnection);
+        t.start();
+
         ElectrumClientSingleLineResponse response = clientConnection.getResult();
         String blockString = response.getLine();
 
@@ -87,13 +89,31 @@ public class ElectrumClientTest {
     public void subscribeBlockHeadersWithConnectionClass() throws Exception {
         SubscribeHeadersClientConnection clientConnection = new SubscribeHeadersClientConnection(ELECTRUM_HOST, ELECTRUM_PORT);
 
-        clientConnection.makeRequest();
+        Thread t =new Thread(clientConnection);
+        t.start();
+
         ElectrumClientMultiLineResponse response = clientConnection.getResult();
         Stream<String> blockStringStream = response.getLines();
         String currentBlockString = blockStringStream.findFirst().get();
+        blockStringStream.close();
 
         System.out.println(currentBlockString);
         assert currentBlockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
     }
+
+    /*
+    @Test
+    public void getBlockHeaderWithConnectionClassBadServer() throws Exception {
+        GetHeaderClientConnection clientConnection = new GetHeaderClientConnection("foooooooo", ELECTRUM_PORT);
+
+        Thread t =new Thread(clientConnection);
+        t.start();
+
+        ElectrumClientSingleLineResponse response = clientConnection.getResult();
+        String blockString = response.getLine();
+
+        System.out.println(blockString);
+        assert blockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
+    }*/
 
 }
