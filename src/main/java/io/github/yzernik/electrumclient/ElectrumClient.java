@@ -1,7 +1,6 @@
 package io.github.yzernik.electrumclient;
 
 import java.io.*;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -17,7 +16,7 @@ public class ElectrumClient {
     private int port;
 
     public ElectrumClient(String host, int port) throws UnknownHostException {
-        this.address = ElectrumClient.getInetAddress(host);
+        this.address = AddressLookup.getInetAddress(host);
         this.port = port;
     }
 
@@ -71,7 +70,6 @@ public class ElectrumClient {
         sendNewLine();
     }
 
-
     public void sendSubscribeMessageWithRPCClient() throws IOException {
         // String subscribeMessage = "{ \"id\": \"blk\", \"method\": \"blockchain.headers.subscribe\"}";
         // Log.i(getClass().getName(), subscribeMessage);
@@ -80,27 +78,6 @@ public class ElectrumClient {
         ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream);
         electrumRPCClient.makeRequestSubscribeBlockHeaders();
         sendNewLine();
-    }
-
-    public static InetAddress selectAddress(InetAddress[] addresses) {
-        // Get ip6 address if available
-        for (InetAddress addr : addresses) {
-            if (addr instanceof Inet6Address) {
-                return (Inet6Address) addr;
-            }
-        }
-
-        // Get any address if available
-        if(addresses.length > 0) {
-            return addresses[0];
-        }
-
-        return null;
-    }
-
-    public static InetAddress getInetAddress(String host) throws UnknownHostException {
-        InetAddress[] addresses = InetAddress.getAllByName(host);
-        return selectAddress(addresses);
     }
 
     public Stream<String> getResponseLines() throws IOException {
