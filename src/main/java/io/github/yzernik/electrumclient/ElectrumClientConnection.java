@@ -1,6 +1,9 @@
 package io.github.yzernik.electrumclient;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -25,22 +28,23 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
         try(
                 Socket clientSocket = new Socket(address, port);
                 OutputStream clientOutputStream = clientSocket.getOutputStream();
-                PrintWriter out = new PrintWriter(clientOutputStream, true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         ) {
-            return makeRequest(clientOutputStream, out, in);
+            return makeRequest(clientOutputStream, in);
         } catch (IOException e) {
             throw e;
         }
     }
 
-    private void sendNewLine(PrintWriter out) throws IOException {
-        out.println();
+    private void sendNewLine(OutputStream outputStream) throws IOException {
+        // out.println();
+        outputStream.write("\n".getBytes());
+        outputStream.flush();
     }
 
-    public T makeRequest(OutputStream outputStream, PrintWriter out, BufferedReader in) throws IOException {
+    public T makeRequest(OutputStream outputStream, BufferedReader in) throws IOException {
         sendRPCRequest(outputStream);
-        sendNewLine(out);
+        sendNewLine(outputStream);
         return getResponse(in);
     }
 

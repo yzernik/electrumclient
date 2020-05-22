@@ -69,13 +69,28 @@ public class ElectrumClientTest {
 
     @Test
     public void getBlockHeaderWithConnectionClass() throws Exception {
-        ElectrumClientConnection<ElectrumClientSingleLineResponse> clientConnection = new GetHeaderClientConnection("currentlane.lovebitco.in", 50001);
+        ElectrumClientConnection<ElectrumClientSingleLineResponse> clientConnection
+                = new GetHeaderClientConnection("currentlane.lovebitco.in", 50001);
 
         ElectrumClientSingleLineResponse response = clientConnection.makeRequest();
         String blockString = response.getLine();
 
         System.out.println(blockString);
         assert blockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
+    }
+
+
+    @Test
+    public void subscribeBlockHeadersWithConnectionClass() throws Exception {
+        ElectrumClientConnection<ElectrumClientMultiLineResponse> clientConnection
+                = new SubscribeHeadersClientConnection("currentlane.lovebitco.in", 50001);
+
+        ElectrumClientMultiLineResponse response = clientConnection.makeRequest();
+        Stream<String> blockStringStream = response.getLines();
+        String firstBlockString = blockStringStream.findFirst().get();
+
+        System.out.println(firstBlockString);
+        assert firstBlockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
     }
 
 }
