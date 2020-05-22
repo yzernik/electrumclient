@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class GetHeaderClientConnection extends ElectrumClientConnection<ElectrumClientSingleLineResponse<GetHeaderResponse>> {
+public class GetHeaderClientConnection extends ElectrumClientConnection<GetHeaderResponse, ElectrumClientSingleLineResponse<GetHeaderResponse>> {
 
     public GetHeaderClientConnection(String host, int port) {
         super(host, port);
@@ -20,7 +20,7 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<Electrum
     ElectrumClientSingleLineResponse<GetHeaderResponse> getResponse(BufferedReader in) throws IOException {
         String line = in.readLine();
         GetHeaderResponse getHeaderResponse = new GetHeaderResponse(line);
-        return new ElectrumClientSingleLineResponse<GetHeaderResponse>(getHeaderResponse);
+        return new ElectrumClientSingleLineResponse<>(getHeaderResponse);
     }
 
 }

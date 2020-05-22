@@ -7,10 +7,10 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implements Runnable {
+abstract class ElectrumClientConnection<S extends ElectrumResponse, T extends ElectrumClientResponse<S>> implements Runnable {
 
-    private String host;
-    private int port;
+    private final String host;
+    private final int port;
     private ThreadResult threadResult = null;
 
     public ElectrumClientConnection(String host, int port) {
@@ -30,9 +30,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
             try(
                     Socket clientSocket = new Socket(address, port);
                     OutputStream clientOutputStream = clientSocket.getOutputStream();
-                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
             ) {
-                // ElectrumClientResponse response = makeRequest(clientOutputStream, in);
                 T result = makeRequest(clientOutputStream, in);
                 threadResult = new ThreadResult(result, null);
 
@@ -73,8 +72,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
 
     /**
      * Get the result of the connection request.
-     * @return
-     * @throws InterruptedException
+     * @return Returns the result of the connection request.
+     * @throws InterruptedException When the thread is interrupted.
      */
     public synchronized T getResult() throws InterruptedException, IOException {
         while (threadResult == null)
@@ -92,8 +91,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
     }
 
     public class ThreadResult {
-        private T result;
-        private IOException exception;
+        private final T result;
+        private final IOException exception;
 
         public ThreadResult(T result, IOException exception) {
             this.result = result;
