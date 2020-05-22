@@ -40,7 +40,6 @@ abstract class ElectrumClientConnection<S extends ElectrumResponse, T extends El
                     notifyAll();
                 }
 
-                // TODO: Wait until result is closed.
                 waitForResultClose(result);
 
             }

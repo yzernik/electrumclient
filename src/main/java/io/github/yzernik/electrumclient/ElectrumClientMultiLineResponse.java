@@ -9,9 +9,7 @@ public class ElectrumClientMultiLineResponse<S extends ElectrumResponse> impleme
 
     public ElectrumClientMultiLineResponse(Stream<S> lines) {
         this.lines = lines;
-        lines.onClose(() -> {
-            markComplete();
-        });
+        lines.onClose(this::markComplete);
     }
 
     public Stream<S> getLines() {
