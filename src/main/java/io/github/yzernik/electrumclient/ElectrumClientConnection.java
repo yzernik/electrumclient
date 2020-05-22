@@ -11,20 +11,16 @@ import java.net.UnknownHostException;
 
 abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
 
-    private InetAddress address;
+    private String host;
     private int port;
 
-    public ElectrumClientConnection(String host, int port) throws UnknownHostException {
-        this.address = ElectrumClient.getInetAddress(host);
-        this.port = port;
-    }
-
-    public ElectrumClientConnection(InetAddress address, int port) {
-        this.address = address;
+    public ElectrumClientConnection(String host, int port) {
+        this.host = host;
         this.port = port;
     }
 
     public T makeRequest() throws IOException {
+        InetAddress address = ElectrumClient.getInetAddress(host);
         try(
                 Socket clientSocket = new Socket(address, port);
                 OutputStream clientOutputStream = clientSocket.getOutputStream();

@@ -3,18 +3,12 @@ package io.github.yzernik.electrumclient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.stream.Stream;
 
 public class SubscribeHeadersClientConnection extends ElectrumClientConnection {
 
-    public SubscribeHeadersClientConnection(String host, int port) throws UnknownHostException {
+    public SubscribeHeadersClientConnection(String host, int port) {
         super(host, port);
-    }
-
-    public SubscribeHeadersClientConnection(InetAddress address, int port) {
-        super(address, port);
     }
 
     @Override
