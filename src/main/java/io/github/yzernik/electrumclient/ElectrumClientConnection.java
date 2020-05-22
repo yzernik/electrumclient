@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-abstract class ElectrumClientConnection<S extends ElectrumResponse, T extends ElectrumClientResponse<S>> implements Runnable {
+abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implements Runnable {
 
     private final String host;
     private final int port;

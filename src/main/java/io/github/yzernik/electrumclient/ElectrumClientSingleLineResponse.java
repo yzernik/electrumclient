@@ -1,6 +1,6 @@
 package io.github.yzernik.electrumclient;
 
-public class ElectrumClientSingleLineResponse<S extends ElectrumResponse> implements ElectrumClientResponse<S> {
+public class ElectrumClientSingleLineResponse<S extends ElectrumResponse> implements ElectrumClientResponse {
 
     private final S line;
 

@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class GetHeaderClientConnection extends ElectrumClientConnection<GetHeaderResponse, ElectrumClientSingleLineResponse<GetHeaderResponse>> {
+public class GetHeaderClientConnection extends ElectrumClientConnection<ElectrumClientSingleLineResponse<GetHeaderResponse>> {
 
     public GetHeaderClientConnection(String host, int port) {
         super(host, port);

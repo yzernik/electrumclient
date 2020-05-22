@@ -2,7 +2,7 @@ package io.github.yzernik.electrumclient;
 
 import java.util.stream.Stream;
 
-public class ElectrumClientMultiLineResponse<S extends ElectrumResponse> implements ElectrumClientResponse<S> {
+public class ElectrumClientMultiLineResponse<S extends ElectrumResponse> implements ElectrumClientResponse {
 
     private final Stream<S> lines;
     private boolean isComplete = false;
