@@ -2,7 +2,7 @@ package io.github.yzernik.electrumclient;
 
 public class ElectrumClientSingleLineResponse implements ElectrumClientResponse {
 
-    private String line;
+    private final String line;
 
     public ElectrumClientSingleLineResponse(String line) {
         this.line = line;
@@ -10,5 +10,10 @@ public class ElectrumClientSingleLineResponse implements ElectrumClientResponse 
 
     public String getLine() {
         return line;
+    }
+
+    @Override
+    public void waitUntilComplete() {
+        return;
     }
 }
