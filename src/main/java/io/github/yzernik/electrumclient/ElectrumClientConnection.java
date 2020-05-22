@@ -44,6 +44,12 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
         clientSocket.close();
     }
 
+    public T makeRequest() throws IOException {
+        start();
+        sendRPCRequest();
+        sendNewLine();
+        return getResponse();
+    }
 
     public void sendRequestWithRPCClient() throws IOException {
         sendRPCRequest();

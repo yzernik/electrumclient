@@ -70,10 +70,8 @@ public class ElectrumClientTest {
     @Test
     public void getBlockHeaderWithConnectionClass() throws Exception {
         ElectrumClientConnection<ElectrumClientSingleLineResponse> clientConnection = new GetHeaderClientConnection("currentlane.lovebitco.in", 50001);
-        clientConnection.start();
 
-        clientConnection.sendRequestWithRPCClient();
-        ElectrumClientSingleLineResponse response = clientConnection.getResponse();
+        ElectrumClientSingleLineResponse response = clientConnection.makeRequest();
         String blockString = response.getLine();
 
         System.out.println(blockString);
