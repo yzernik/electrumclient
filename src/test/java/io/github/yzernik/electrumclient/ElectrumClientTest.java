@@ -67,5 +67,17 @@ public class ElectrumClientTest {
         assert currentBlockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
     }
 
+    @Test
+    public void getBlockHeaderWithConnectionClass() throws Exception {
+        ElectrumClientConnection<ElectrumClientSingleLineResponse> clientConnection = new GetHeaderClientConnection("currentlane.lovebitco.in", 50001);
+        clientConnection.start();
+
+        clientConnection.sendRequestWithRPCClient();
+        ElectrumClientSingleLineResponse response = clientConnection.getResponse();
+        String blockString = response.getLine();
+
+        System.out.println(blockString);
+        assert blockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
+    }
 
 }
