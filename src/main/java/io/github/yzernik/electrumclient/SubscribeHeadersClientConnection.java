@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.stream.Stream;
 
-public class SubscribeHeadersClientConnection extends ElectrumClientConnection<ElectrumClientMultiLineResponse> {
+public class SubscribeHeadersClientConnection extends ElectrumClientConnection<ElectrumClientMultiLineResponse<SubscribeHeadersResponse>> {
 
     public SubscribeHeadersClientConnection(String host, int port) {
         super(host, port);
@@ -18,9 +18,13 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     }
 
     @Override
-    ElectrumClientMultiLineResponse getResponse(BufferedReader in) throws IOException {
+    ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in) throws IOException {
         Stream<String> lines = in.lines();
-        return new ElectrumClientMultiLineResponse(lines);
+        // TODO: parse each response line.
+        Stream<SubscribeHeadersResponse> responseStream = lines.map(line -> {
+            return new SubscribeHeadersResponse("fooo", 77);
+        });
+        return new ElectrumClientMultiLineResponse<SubscribeHeadersResponse>(responseStream);
     }
 
 }

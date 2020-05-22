@@ -1,6 +1,6 @@
 package io.github.yzernik.electrumclient;
 
-public class SubscribeHeadersResponse {
+public class SubscribeHeadersResponse implements ElectrumResponse{
 
     public SubscribeHeadersResponse(String hex, int height) {
         this.hex = hex;

@@ -78,11 +78,11 @@ public class ElectrumClientTest {
         Thread t =new Thread(clientConnection);
         t.start();
 
-        ElectrumClientSingleLineResponse response = clientConnection.getResult();
-        String blockString = response.getLine();
+        ElectrumClientSingleLineResponse<GetHeaderResponse> response = clientConnection.getResult();
+        GetHeaderResponse getHeaderResponse = response.getLine();
 
-        System.out.println(blockString);
-        assert blockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
+        System.out.println(getHeaderResponse.hex);
+        assert getHeaderResponse.hex.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
     }
 
 
@@ -93,13 +93,14 @@ public class ElectrumClientTest {
         Thread t =new Thread(clientConnection);
         t.start();
 
-        ElectrumClientMultiLineResponse response = clientConnection.getResult();
-        Stream<String> blockStringStream = response.getLines();
-        String currentBlockString = blockStringStream.findFirst().get();
-        blockStringStream.close();
+        ElectrumClientMultiLineResponse<SubscribeHeadersResponse> response = clientConnection.getResult();
+        Stream<SubscribeHeadersResponse> headerStream = response.getLines();
+        SubscribeHeadersResponse currentHeader = headerStream.findFirst().get();
+        headerStream.close();
 
-        System.out.println(currentBlockString);
-        assert currentBlockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
+        System.out.println(currentHeader);
+        System.out.println(currentHeader.hex);
+        assert currentHeader.hex.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
     }
 
 

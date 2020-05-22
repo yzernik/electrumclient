@@ -1,14 +1,14 @@
 package io.github.yzernik.electrumclient;
 
-public class ElectrumClientSingleLineResponse implements ElectrumClientResponse {
+public class ElectrumClientSingleLineResponse<S extends ElectrumResponse> implements ElectrumClientResponse<S> {
 
-    private final String line;
+    private final S line;
 
-    public ElectrumClientSingleLineResponse(String line) {
+    public ElectrumClientSingleLineResponse(S line) {
         this.line = line;
     }
 
-    public String getLine() {
+    public S getLine() {
         return line;
     }
 
