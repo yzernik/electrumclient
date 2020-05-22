@@ -51,11 +51,6 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> {
         return getResponse();
     }
 
-    public void sendRequestWithRPCClient() throws IOException {
-        sendRPCRequest();
-        sendNewLine();
-    }
-
     abstract void sendRPCRequest() throws IOException;
 
     abstract T getResponse() throws IOException;
