@@ -26,7 +26,7 @@ public class ElectrumRPCClientTest {
     }
 
     @Test
-    public void testInvokeNoParams() throws Throwable {
+    public void testMakeRequestGetBlockHeader() throws Throwable {
         electrumRPCClient.makeRequestGetBlockHeader(27);
         String request = new String(byteArrayOutputStream.toByteArray());
         String expectedRequest = "{ \"id\": \"blk\", \"method\": \"blockchain.block.header\", \"params\": [23]}";

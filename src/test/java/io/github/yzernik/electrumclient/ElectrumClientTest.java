@@ -27,6 +27,7 @@ public class ElectrumClientTest {
         electrumClient.sendGetBlockHeaderMessage();
         String blockString = electrumClient.getResponseLine();
 
+        System.out.println(blockString);
         assert blockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
     }
 
@@ -59,7 +60,7 @@ public class ElectrumClientTest {
         ElectrumClient electrumClient = new ElectrumClient("currentlane.lovebitco.in", 50001);
         electrumClient.start();
 
-        electrumClient.sendGetBlockHeaderMessageWithRPCClient();
+        electrumClient.sendSubscribeMessageWithRPCClient();
         Stream<String> blockStringStream = electrumClient.getResponseLines();
         String currentBlockString = blockStringStream.findFirst().get();
 

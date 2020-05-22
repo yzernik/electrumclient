@@ -39,6 +39,10 @@ public class ElectrumClient {
         //String resp = in.readLine();
     }
 
+    public void sendNewLine() throws IOException {
+        out.println();
+    }
+
     public void stopConnection() throws IOException {
         in.close();
         out.close();
@@ -52,7 +56,7 @@ public class ElectrumClient {
     }
 
     public void sendGetBlockHeaderMessage() throws IOException {
-        String getBlockHeaderMessage = "{ \"id\": \"1538775738\", \"jsonrpc\":\"2.0\", \"method\": \"blockchain.block.header\", \"params\": [23]}";
+        String getBlockHeaderMessage = "{\"id\":\"1538775738\",\"jsonrpc\":\"2.0\",\"method\":\"blockchain.block.header\",\"params\":[23]}";
         System.out.println(getBlockHeaderMessage);
         sendMessage(getBlockHeaderMessage);
     }
@@ -64,6 +68,7 @@ public class ElectrumClient {
 
         ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream);
         electrumRPCClient.makeRequestGetBlockHeader(23);
+        sendNewLine();
     }
 
 
@@ -74,6 +79,7 @@ public class ElectrumClient {
 
         ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream);
         electrumRPCClient.makeRequestSubscribeBlockHeaders();
+        sendNewLine();
     }
 
     public static InetAddress selectAddress(InetAddress[] addresses) {
