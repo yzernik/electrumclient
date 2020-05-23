@@ -16,12 +16,14 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<Electrum
     @Override
     void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException {
         // ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(outputStream);
-        electrumRPCClient.makeRequestGetBlockHeader(height);
+        String getBlockHeaderRequestString = electrumRPCClient.makeRequestGetBlockHeader(height);
+        outputStream.write(getBlockHeaderRequestString.getBytes());
     }
 
     @Override
     ElectrumClientSingleLineResponse<GetHeaderResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
-        String header = electrumRPCClient.parseResponseGetBlockHeader();
+        String line = in.readLine();
+        String header = electrumRPCClient.parseResponseGetBlockHeader(line);
 
         //String line = in.readLine();
         GetHeaderResponse getHeaderResponse = new GetHeaderResponse(header);

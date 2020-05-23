@@ -3,9 +3,7 @@ package io.github.yzernik.electrumclient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class ElectrumRPCClient {
 
@@ -16,6 +14,14 @@ public class ElectrumRPCClient {
     private final OutputStream outputStream;
     private final InputStream inputStream;
 
+    public ElectrumRPCClient() {
+        client = new JsonRpcClient();
+        this.outputStream = null;
+        this.inputStream = null;
+
+        // User user = client.invoke("createUser", new Object[] { "bob", "the builder" }, User.class);
+    }
+
     public ElectrumRPCClient(OutputStream outputStream, InputStream inputStream) {
         client = new JsonRpcClient();
         this.outputStream = outputStream;
@@ -24,13 +30,26 @@ public class ElectrumRPCClient {
         // User user = client.invoke("createUser", new Object[] { "bob", "the builder" }, User.class);
     }
 
-    public void makeRequestGetBlockHeader(int height) throws IOException {
-        client.invoke(GET_BLOCK_HEADER_REQUEST, new Object[]{ height }, outputStream);
+    private String makeRequestString(String methodName, Object argument) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        client.invoke(methodName, argument, baos);
+        return baos.toString();
     }
 
-    public String parseResponseGetBlockHeader() throws Throwable {
-        return client.readResponse(String.class, inputStream);
+    public String makeRequestGetBlockHeader(int height) throws IOException {
+        // client.invoke(GET_BLOCK_HEADER_REQUEST, new Object[]{ height }, outputStream);
+        return makeRequestString(GET_BLOCK_HEADER_REQUEST, new Object[]{ height });
     }
+
+    public String parseResponseGetBlockHeader(String line) throws Throwable {
+        InputStream lineInputStream = new ByteArrayInputStream(line.getBytes());
+        return client.readResponse(String.class, lineInputStream);
+    }
+
+    /*
+       public String parseResponseGetBlockHeader() throws Throwable {
+        return client.readResponse(String.class, inputStream);
+    }*/
 
     public void makeRequestSubscribeBlockHeaders() throws IOException {
         client.invoke(SUBSCRIBE_BLOCK_HEADERS_REQUEST, new Object[]{ }, outputStream);

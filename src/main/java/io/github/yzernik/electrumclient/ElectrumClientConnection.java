@@ -30,7 +30,7 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
                     InputStream clientInputStream = clientSocket.getInputStream();
                     BufferedReader in = new BufferedReader(new InputStreamReader(clientInputStream))
             ) {
-                ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream, clientInputStream);
+                ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient();
                 T result = makeRequest(clientOutputStream, in, electrumRPCClient);
                 threadResult = new ThreadResult(result, null);
 
