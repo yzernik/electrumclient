@@ -11,21 +11,17 @@ public class ElectrumRPCClient {
     private static final String SUBSCRIBE_BLOCK_HEADERS_REQUEST = "blockchain.headers.subscribe";
 
     private final JsonRpcClient client;
-    private final OutputStream outputStream;
-    private final InputStream inputStream;
 
     public ElectrumRPCClient() {
         client = new JsonRpcClient();
-        this.outputStream = null;
-        this.inputStream = null;
 
         // User user = client.invoke("createUser", new Object[] { "bob", "the builder" }, User.class);
     }
 
     public ElectrumRPCClient(OutputStream outputStream, InputStream inputStream) {
         client = new JsonRpcClient();
-        this.outputStream = outputStream;
-        this.inputStream = inputStream;
+        // this.outputStream = outputStream;
+        // this.inputStream = inputStream;
 
         // User user = client.invoke("createUser", new Object[] { "bob", "the builder" }, User.class);
     }
@@ -46,19 +42,28 @@ public class ElectrumRPCClient {
         return client.readResponse(String.class, lineInputStream);
     }
 
+    public SubscribeHeadersResponse parseResponseSubscribeBlockHeaders(String line) throws Throwable {
+        InputStream lineInputStream = new ByteArrayInputStream(line.getBytes());
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        return client.readResponse(SubscribeHeadersResponse.class, lineInputStream);
+    }
+
     /*
        public String parseResponseGetBlockHeader() throws Throwable {
         return client.readResponse(String.class, inputStream);
     }*/
 
-    public void makeRequestSubscribeBlockHeaders() throws IOException {
-        client.invoke(SUBSCRIBE_BLOCK_HEADERS_REQUEST, new Object[]{ }, outputStream);
+    public String makeRequestSubscribeBlockHeaders() throws IOException {
+        return makeRequestString(SUBSCRIBE_BLOCK_HEADERS_REQUEST, new Object[]{ });
     }
 
+    /*
     public SubscribeHeadersResponse parseResponseSubscribeBlockHeaders() throws Throwable {
         ObjectMapper mapper = new ObjectMapper();
 
         return client.readResponse(SubscribeHeadersResponse.class, inputStream);
-    }
+    }*/
 
 }

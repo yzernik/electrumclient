@@ -14,14 +14,16 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     @Override
     void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException {
         // ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(outputStream);
-        electrumRPCClient.makeRequestSubscribeBlockHeaders();
+        String requestBlocksRequestString = electrumRPCClient.makeRequestSubscribeBlockHeaders();
+        outputStream.write(requestBlocksRequestString.getBytes());
     }
 
     @Override
     ElectrumClientSingleLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
-        SubscribeHeadersResponse subscribeHeadersResponse = electrumRPCClient.parseResponseSubscribeBlockHeaders();
+        String line = in.readLine();
+        SubscribeHeadersResponse subscribeHeadersResponse = electrumRPCClient.parseResponseSubscribeBlockHeaders(line);
 
-        return new ElectrumClientSingleLineResponse<SubscribeHeadersResponse>(subscribeHeadersResponse);
+        return new ElectrumClientSingleLineResponse<>(subscribeHeadersResponse);
     }
 
 }
