@@ -22,13 +22,11 @@ public class ElectrumRPCClientTest {
     private static final String PARAMS = "params";
 
     private ByteArrayOutputStream byteArrayOutputStream;
-    private InputStream inputStream;
     private ElectrumRPCClient electrumRPCClient;
 
     @Before
     public void setUp() {
         this.byteArrayOutputStream = new ByteArrayOutputStream();
-        this.inputStream = null;
         this.electrumRPCClient = new ElectrumRPCClient(this.byteArrayOutputStream, null);
     }
 
@@ -39,8 +37,7 @@ public class ElectrumRPCClientTest {
 
     @Test
     public void testMakeRequestGetBlockHeader() throws Throwable {
-        electrumRPCClient.makeRequestGetBlockHeader(27);
-        String request = new String(byteArrayOutputStream.toByteArray());
+        String request = electrumRPCClient.makeRequestGetBlockHeader(27);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(request);
 
