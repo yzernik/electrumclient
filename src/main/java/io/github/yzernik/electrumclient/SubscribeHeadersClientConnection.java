@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.stream.Stream;
 
-public class SubscribeHeadersClientConnection extends ElectrumClientConnection<ElectrumClientSingleLineResponse<SubscribeHeadersResponse>> {
+public class SubscribeHeadersClientConnection extends ElectrumClientConnection<ElectrumClientMultiLineResponse<SubscribeHeadersResponse>> {
 
     public SubscribeHeadersClientConnection(String host, int port) {
         super(host, port);
@@ -19,11 +19,20 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     }
 
     @Override
-    ElectrumClientSingleLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
-        String line = in.readLine();
-        SubscribeHeadersResponse subscribeHeadersResponse = electrumRPCClient.parseResponseSubscribeBlockHeaders(line);
+    ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
+        Stream<String> lineStream = in.lines();
+        Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
+            return parseResponseLine(line,electrumRPCClient);
+        });
+        return new ElectrumClientMultiLineResponse<>(responseStream);
+    }
 
-        return new ElectrumClientSingleLineResponse<>(subscribeHeadersResponse);
+    private SubscribeHeadersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) {
+        try {
+            return electrumRPCClient.parseResponseSubscribeBlockHeaders(line);
+        } catch (Throwable throwable) {
+            return null;
+        }
     }
 
 }

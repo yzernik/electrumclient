@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -98,15 +99,16 @@ public class ElectrumClientTest {
         Thread t =new Thread(clientConnection);
         t.start();
 
-        ElectrumClientSingleLineResponse<SubscribeHeadersResponse> response = clientConnection.getResult();
-        SubscribeHeadersResponse headerStream = response.getLine();
+        ElectrumClientMultiLineResponse<SubscribeHeadersResponse> response = clientConnection.getResult();
+        Stream<SubscribeHeadersResponse> responseStream = response.getLines();
+        SubscribeHeadersResponse firstResponse = responseStream.findFirst().get();
         // headerStream.close();
 
-        System.out.println(headerStream);
-        System.out.println(headerStream.hex);
-        System.out.println(headerStream.height);
-        assertEquals(HEADER_LENGTH_HEX, headerStream.hex.length());
-        assert headerStream.height >= 631359;
+        System.out.println(firstResponse);
+        System.out.println(firstResponse.hex);
+        System.out.println(firstResponse.height);
+        assertEquals(HEADER_LENGTH_HEX, firstResponse.hex.length());
+        assert firstResponse.height >= 631359;
     }
 
 
