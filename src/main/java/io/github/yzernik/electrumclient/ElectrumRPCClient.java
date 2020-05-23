@@ -10,8 +10,8 @@ public class ElectrumRPCClient {
     private static final String GET_BLOCK_HEADER_REQUEST = "blockchain.block.header";
     private static final String SUBSCRIBE_BLOCK_HEADERS_REQUEST = "blockchain.headers.subscribe";
 
-    private JsonRpcClient client;
-    private OutputStream outputStream;
+    private final JsonRpcClient client;
+    private final OutputStream outputStream;
 
     public ElectrumRPCClient(OutputStream outputStream) {
         client = new JsonRpcClient();

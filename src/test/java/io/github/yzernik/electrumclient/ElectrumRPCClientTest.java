@@ -1,6 +1,8 @@
 package io.github.yzernik.electrumclient;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,8 +10,14 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ElectrumRPCClientTest {
+
+    private static final String ID = "id";
+    private static final String JSONRPC = "jsonrpc";
+    private static final String METHOD = "method";
+    private static final String PARAMS = "params";
 
     private ByteArrayOutputStream byteArrayOutputStream;
     private ElectrumRPCClient electrumRPCClient;
@@ -29,9 +37,13 @@ public class ElectrumRPCClientTest {
     public void testMakeRequestGetBlockHeader() throws Throwable {
         electrumRPCClient.makeRequestGetBlockHeader(27);
         String request = new String(byteArrayOutputStream.toByteArray());
-        String expectedRequest = "{ \"id\": \"blk\", \"method\": \"blockchain.block.header\", \"params\": [23]}";
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(request);
 
-        assertEquals(expectedRequest, request);
+        assertTrue(jsonNode.has(ID));
+        assertTrue(jsonNode.has(JSONRPC));
+        assertEquals(jsonNode.get(METHOD).textValue(), "blockchain.block.header");
+        assertEquals(27, jsonNode.get(PARAMS).get(0).intValue());
     }
 
 }
