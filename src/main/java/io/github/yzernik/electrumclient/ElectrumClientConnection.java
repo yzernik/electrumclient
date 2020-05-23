@@ -1,9 +1,6 @@
 package io.github.yzernik.electrumclient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -30,9 +27,11 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
             try(
                     Socket clientSocket = new Socket(address, port);
                     OutputStream clientOutputStream = clientSocket.getOutputStream();
-                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+                    InputStream clientInputStream = clientSocket.getInputStream();
+                    BufferedReader in = new BufferedReader(new InputStreamReader(clientInputStream))
             ) {
-                T result = makeRequest(clientOutputStream, in);
+                ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream, clientInputStream);
+                T result = makeRequest(clientOutputStream, in, electrumRPCClient);
                 threadResult = new ThreadResult(result, null);
 
                 // Wake up threads blocked on the getResult() method
@@ -43,7 +42,7 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
                 waitForResultClose(result);
 
             }
-        } catch (IOException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             threadResult = new ThreadResult(null, e);
         } finally {
@@ -59,22 +58,22 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
         outputStream.flush();
     }
 
-    public T makeRequest(OutputStream outputStream, BufferedReader in) throws IOException {
-        sendRPCRequest(outputStream);
+    public T makeRequest(OutputStream outputStream, BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
+        sendRPCRequest(outputStream, electrumRPCClient);
         sendNewLine(outputStream);
-        return getResponse(in);
+        return getResponse(in, electrumRPCClient);
     }
 
-    abstract void sendRPCRequest(OutputStream outputStream) throws IOException;
+    abstract void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException;
 
-    abstract T getResponse(BufferedReader in) throws IOException;
+    abstract T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable;
 
     /**
      * Get the result of the connection request.
      * @return Returns the result of the connection request.
      * @throws InterruptedException When the thread is interrupted.
      */
-    public synchronized T getResult() throws InterruptedException, IOException {
+    public synchronized T getResult() throws Throwable {
         while (threadResult == null)
             wait();
 
@@ -91,9 +90,9 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
 
     public class ThreadResult {
         private final T result;
-        private final IOException exception;
+        private final Throwable exception;
 
-        public ThreadResult(T result, IOException exception) {
+        public ThreadResult(T result, Throwable exception) {
             this.result = result;
             this.exception = exception;
         }
@@ -102,7 +101,7 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
             return result;
         }
 
-        public IOException getException() {
+        public Throwable getException() {
             return exception;
         }
     }

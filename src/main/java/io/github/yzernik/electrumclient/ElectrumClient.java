@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 public class ElectrumClient {
     private OutputStream clientOutputStream;
+    private InputStream clientInputStream;
     private PrintWriter out;
     private BufferedReader in;
 
@@ -22,6 +23,7 @@ public class ElectrumClient {
     public void start() throws IOException {
         Socket clientSocket = new Socket(address, port);
         clientOutputStream = clientSocket.getOutputStream();
+        clientInputStream = clientSocket.getInputStream();
         out = new PrintWriter(clientOutputStream, true);
         InputStream socketInputStream = clientSocket.getInputStream();
         in = new BufferedReader(new InputStreamReader(socketInputStream));
@@ -52,7 +54,7 @@ public class ElectrumClient {
         //Log.i(getClass().getName(), getBlockHeaderMessage);
         //sendMessage(getBlockHeaderMessage);
 
-        ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream);
+        ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream, clientInputStream);
         electrumRPCClient.makeRequestGetBlockHeader(23);
         sendNewLine();
     }
@@ -62,7 +64,7 @@ public class ElectrumClient {
         // Log.i(getClass().getName(), subscribeMessage);
         // sendMessage(subscribeMessage);
 
-        ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream);
+        ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(clientOutputStream, clientInputStream);
         electrumRPCClient.makeRequestSubscribeBlockHeaders();
         sendNewLine();
     }
