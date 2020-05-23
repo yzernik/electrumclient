@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ElectrumClientTest {
 
-    private static final String ELECTRUM_HOST = "currentlane.lovebitco.in";
+    private static final String ELECTRUM_HOST = "electrum-server.ninja";
     private static final int ELECTRUM_PORT = 50001;
     private static final int HEADER_LENGTH_HEX = 160;
 
