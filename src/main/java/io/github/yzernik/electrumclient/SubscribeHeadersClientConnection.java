@@ -12,18 +12,27 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     }
 
     @Override
-    void sendRPCRequest(OutputStream outputStream) throws IOException {
-        ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(outputStream);
-        electrumRPCClient.makeRequestSubscribeBlockHeaders();
+    void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException {
+        // ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(outputStream);
+        String requestBlocksRequestString = electrumRPCClient.makeRequestSubscribeBlockHeaders();
+        outputStream.write(requestBlocksRequestString.getBytes());
     }
 
     @Override
-    ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in) {
-        Stream<String> lines = in.lines();
-        // TODO: parse each response line.
-        Stream<SubscribeHeadersResponse> responseStream = lines.map(line ->
-                new SubscribeHeadersResponse("fooo", 77));
+    ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
+        Stream<String> lineStream = in.lines();
+        Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
+            return parseResponseLine(line,electrumRPCClient);
+        });
         return new ElectrumClientMultiLineResponse<>(responseStream);
+    }
+
+    private SubscribeHeadersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) {
+        try {
+            return electrumRPCClient.parseResponseSubscribeBlockHeaders(line);
+        } catch (Throwable throwable) {
+            return null;
+        }
     }
 
 }
