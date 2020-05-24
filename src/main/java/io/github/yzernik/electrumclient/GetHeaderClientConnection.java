@@ -2,7 +2,6 @@ package io.github.yzernik.electrumclient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
 
 public class GetHeaderClientConnection extends ElectrumClientConnection<ElectrumClientSingleLineResponse<GetHeaderResponse>> {
 
