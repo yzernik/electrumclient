@@ -32,7 +32,6 @@ public class ElectrumClientTest {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         String hex = electrumClient.getHeader(0);
 
-        System.out.println(hex);
         assertEquals(HEADER_LENGTH_HEX, hex.length());
     }
 
@@ -44,9 +43,6 @@ public class ElectrumClientTest {
         AtomicInteger counter = new AtomicInteger(0);
 
         responseStream.limit(2).forEach(header -> {
-            System.out.println(header);
-            System.out.println(header.hex);
-            System.out.println(header.height);
             assertEquals(HEADER_LENGTH_HEX, header.hex.length());
             assert header.height >= 631359;
             counter.incrementAndGet();
@@ -65,7 +61,6 @@ public class ElectrumClientTest {
         ElectrumClientSingleLineResponse<GetHeaderResponse> response = clientConnection.getResult();
         GetHeaderResponse getHeaderResponse = response.getLine();
 
-        System.out.println(getHeaderResponse.hex);
         assertEquals(HEADER_LENGTH_HEX, getHeaderResponse.hex.length());
     }
 
@@ -78,14 +73,9 @@ public class ElectrumClientTest {
         t.start();
 
         ElectrumClientMultiLineResponse<SubscribeHeadersResponse> response = clientConnection.getResult();
-        System.out.println("Got response from server.");
 
         // Test the initial response line
         SubscribeHeadersResponse responseHeader = response.getLine();
-        System.out.println("responseHeader");
-        System.out.println(responseHeader);
-        System.out.println(responseHeader.hex);
-        System.out.println(responseHeader.height);
         assertEquals(HEADER_LENGTH_HEX, responseHeader.hex.length());
         assert responseHeader.height >= 631359;
 
@@ -95,9 +85,6 @@ public class ElectrumClientTest {
         // headerStream.close();
 
         SubscribeHeadersResponse firstStreamHeader = responseStream.findFirst().get();
-        System.out.println(firstStreamHeader);
-        System.out.println(firstStreamHeader.hex);
-        System.out.println(firstStreamHeader.height);
         assertEquals(HEADER_LENGTH_HEX, firstStreamHeader.hex.length());
         assert firstStreamHeader.height >= 631359;
     }
