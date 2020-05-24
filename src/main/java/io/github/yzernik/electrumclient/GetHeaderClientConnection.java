@@ -22,7 +22,6 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<Electrum
         String line = in.readLine();
         String header = electrumRPCClient.parseResponseGetBlockHeader(line);
 
-        //String line = in.readLine();
         GetHeaderResponse getHeaderResponse = new GetHeaderResponse(header);
         return new ElectrumClientSingleLineResponse<>(getHeaderResponse);
     }

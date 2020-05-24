@@ -7,9 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,7 +25,7 @@ public class ElectrumRPCClientTest {
     @Before
     public void setUp() {
         this.byteArrayOutputStream = new ByteArrayOutputStream();
-        this.electrumRPCClient = new ElectrumRPCClient(this.byteArrayOutputStream, null);
+        this.electrumRPCClient = new ElectrumRPCClient();
     }
 
     @After
