@@ -1,6 +1,5 @@
 package io.github.yzernik.electrumclient;
 
-import java.net.UnknownHostException;
 import java.util.stream.Stream;
 
 public class ElectrumClient {
@@ -8,7 +7,7 @@ public class ElectrumClient {
     private final String host;
     private final int port;
 
-    public ElectrumClient(String host, int port) throws UnknownHostException {
+    public ElectrumClient(String host, int port) {
         this.host = host;
         this.port = port;
     }
