@@ -116,14 +116,12 @@ public class ElectrumClientTest {
         // SubscribeHeadersResponse firstResponse = responseStream.findFirst().get();
         // headerStream.close();
 
-        responseStream.limit(1).forEach(header -> {
-            System.out.println(header);
-            System.out.println(header.hex);
-            System.out.println(header.height);
-            assertEquals(HEADER_LENGTH_HEX, header.hex.length());
-            assert header.height >= 631359;
-        });
-
+        SubscribeHeadersResponse firstStreamHeader = responseStream.findFirst().get();
+        System.out.println(firstStreamHeader);
+        System.out.println(firstStreamHeader.hex);
+        System.out.println(firstStreamHeader.height);
+        assertEquals(HEADER_LENGTH_HEX, firstStreamHeader.hex.length());
+        assert firstStreamHeader.height >= 631359;
     }
 
 

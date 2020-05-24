@@ -1,5 +1,8 @@
 package io.github.yzernik.electrumclient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,7 +30,7 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
         Stream<String> lineStream = in.lines();
         Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
             System.out.println("Parsing line: " + line);
-            return parseResponseLine(line,electrumRPCClient);
+            return parseNotificationLine(line,electrumRPCClient);
         });
         return new ElectrumClientMultiLineResponse<>(responseItem, responseStream);
     }
@@ -39,5 +42,16 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
             return null;
         }
     }
+
+    private SubscribeHeadersResponse parseNotificationLine(String line, ElectrumRPCClient electrumRPCClient) {
+        try {
+            return electrumRPCClient.parseNotificationSubscribeBlockHeaders(line);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return null;
+        }
+    }
+
+
 
 }
