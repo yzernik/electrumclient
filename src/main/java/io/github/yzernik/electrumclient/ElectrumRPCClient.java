@@ -1,5 +1,6 @@
 package io.github.yzernik.electrumclient;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 
@@ -65,5 +66,13 @@ public class ElectrumRPCClient {
 
         return client.readResponse(SubscribeHeadersResponse.class, inputStream);
     }*/
+
+
+    public SubscribeHeadersResponse parseNotificationSubscribeBlockHeaders(String line) throws Throwable {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(line);
+        String paramsLine = jsonNode.get("params").get(0).toString();
+        return mapper.readValue(paramsLine, SubscribeHeadersResponse.class);
+    }
 
 }

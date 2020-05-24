@@ -100,15 +100,28 @@ public class ElectrumClientTest {
         t.start();
 
         ElectrumClientMultiLineResponse<SubscribeHeadersResponse> response = clientConnection.getResult();
+        System.out.println("Got response from server.");
+
+        // Test the initial response line
+        SubscribeHeadersResponse responseHeader = response.getLine();
+        System.out.println("responseHeader");
+        System.out.println(responseHeader);
+        System.out.println(responseHeader.hex);
+        System.out.println(responseHeader.height);
+        assertEquals(HEADER_LENGTH_HEX, responseHeader.hex.length());
+        assert responseHeader.height >= 631359;
+
+        // Test the streaming notification lines
         Stream<SubscribeHeadersResponse> responseStream = response.getLines();
-        SubscribeHeadersResponse firstResponse = responseStream.findFirst().get();
+        // SubscribeHeadersResponse firstResponse = responseStream.findFirst().get();
         // headerStream.close();
 
-        System.out.println(firstResponse);
-        System.out.println(firstResponse.hex);
-        System.out.println(firstResponse.height);
-        assertEquals(HEADER_LENGTH_HEX, firstResponse.hex.length());
-        assert firstResponse.height >= 631359;
+        SubscribeHeadersResponse firstStreamHeader = responseStream.findFirst().get();
+        System.out.println(firstStreamHeader);
+        System.out.println(firstStreamHeader.hex);
+        System.out.println(firstStreamHeader.height);
+        assertEquals(HEADER_LENGTH_HEX, firstStreamHeader.hex.length());
+        assert firstStreamHeader.height >= 631359;
     }
 
 
