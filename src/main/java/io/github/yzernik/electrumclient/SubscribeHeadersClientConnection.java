@@ -1,11 +1,7 @@
 package io.github.yzernik.electrumclient;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.stream.Stream;
 
 public class SubscribeHeadersClientConnection extends ElectrumClientConnection<ElectrumClientMultiLineResponse<SubscribeHeadersResponse>> {
@@ -15,10 +11,8 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     }
 
     @Override
-    void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException {
-        // ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(outputStream);
-        String requestBlocksRequestString = electrumRPCClient.makeRequestSubscribeBlockHeaders();
-        outputStream.write(requestBlocksRequestString.getBytes());
+    String getRPCRequest(ElectrumRPCClient electrumRPCClient) throws IOException {
+        return electrumRPCClient.makeRequestSubscribeBlockHeaders();
     }
 
     @Override
