@@ -64,7 +64,12 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
         return getResponse(in, electrumRPCClient);
     }
 
-    abstract void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException;
+    abstract String getRPCRequest(ElectrumRPCClient electrumRPCClient) throws IOException;
+
+    private void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException {
+        String requestString = getRPCRequest(electrumRPCClient);
+        outputStream.write(requestString.getBytes());
+    }
 
     abstract T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable;
 

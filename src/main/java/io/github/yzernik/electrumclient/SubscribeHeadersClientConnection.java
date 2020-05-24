@@ -15,10 +15,8 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     }
 
     @Override
-    void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException {
-        // ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient(outputStream);
-        String requestBlocksRequestString = electrumRPCClient.makeRequestSubscribeBlockHeaders();
-        outputStream.write(requestBlocksRequestString.getBytes());
+    String getRPCRequest(ElectrumRPCClient electrumRPCClient) throws IOException {
+        return electrumRPCClient.makeRequestSubscribeBlockHeaders();
     }
 
     @Override
