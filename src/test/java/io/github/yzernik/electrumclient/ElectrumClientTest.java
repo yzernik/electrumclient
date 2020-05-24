@@ -101,14 +101,17 @@ public class ElectrumClientTest {
 
         ElectrumClientMultiLineResponse<SubscribeHeadersResponse> response = clientConnection.getResult();
         Stream<SubscribeHeadersResponse> responseStream = response.getLines();
-        SubscribeHeadersResponse firstResponse = responseStream.findFirst().get();
+        // SubscribeHeadersResponse firstResponse = responseStream.findFirst().get();
         // headerStream.close();
 
-        System.out.println(firstResponse);
-        System.out.println(firstResponse.hex);
-        System.out.println(firstResponse.height);
-        assertEquals(HEADER_LENGTH_HEX, firstResponse.hex.length());
-        assert firstResponse.height >= 631359;
+        responseStream.limit(2).forEach(header -> {
+            System.out.println(header);
+            System.out.println(header.hex);
+            System.out.println(header.height);
+            assertEquals(HEADER_LENGTH_HEX, header.hex.length());
+            assert header.height >= 631359;
+        });
+
     }
 
 

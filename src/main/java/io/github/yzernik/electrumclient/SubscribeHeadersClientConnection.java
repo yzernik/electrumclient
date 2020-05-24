@@ -22,6 +22,7 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
         Stream<String> lineStream = in.lines();
         Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
+            System.out.println("Parsing line: " + line);
             return parseResponseLine(line,electrumRPCClient);
         });
         return new ElectrumClientMultiLineResponse<>(responseStream);
