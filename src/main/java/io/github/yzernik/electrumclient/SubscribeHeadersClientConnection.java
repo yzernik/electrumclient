@@ -18,12 +18,10 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     @Override
     ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
         String responseLine = in.readLine();
-        System.out.println("Parsing line: " + responseLine);
         SubscribeHeadersResponse responseItem = parseResponseLine(responseLine, electrumRPCClient);
 
         Stream<String> lineStream = in.lines();
         Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
-            System.out.println("Parsing line: " + line);
             return parseNotificationLine(line,electrumRPCClient);
         });
         return new ElectrumClientMultiLineResponse<>(responseItem, responseStream);
