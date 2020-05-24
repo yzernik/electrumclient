@@ -15,16 +15,6 @@ public class ElectrumRPCClient {
 
     public ElectrumRPCClient() {
         client = new JsonRpcClient();
-
-        // User user = client.invoke("createUser", new Object[] { "bob", "the builder" }, User.class);
-    }
-
-    public ElectrumRPCClient(OutputStream outputStream, InputStream inputStream) {
-        client = new JsonRpcClient();
-        // this.outputStream = outputStream;
-        // this.inputStream = inputStream;
-
-        // User user = client.invoke("createUser", new Object[] { "bob", "the builder" }, User.class);
     }
 
     private String makeRequestString(String methodName, Object argument) throws IOException {
@@ -51,22 +41,9 @@ public class ElectrumRPCClient {
         return client.readResponse(SubscribeHeadersResponse.class, lineInputStream);
     }
 
-    /*
-       public String parseResponseGetBlockHeader() throws Throwable {
-        return client.readResponse(String.class, inputStream);
-    }*/
-
     public String makeRequestSubscribeBlockHeaders() throws IOException {
         return makeRequestString(SUBSCRIBE_BLOCK_HEADERS_REQUEST, new Object[]{ });
     }
-
-    /*
-    public SubscribeHeadersResponse parseResponseSubscribeBlockHeaders() throws Throwable {
-        ObjectMapper mapper = new ObjectMapper();
-
-        return client.readResponse(SubscribeHeadersResponse.class, inputStream);
-    }*/
-
 
     public SubscribeHeadersResponse parseNotificationSubscribeBlockHeaders(String line) throws Throwable {
         ObjectMapper mapper = new ObjectMapper();
