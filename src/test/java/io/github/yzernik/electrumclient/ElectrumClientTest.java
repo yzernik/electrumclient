@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
@@ -26,56 +27,33 @@ public class ElectrumClientTest {
         // Nothing
     }
 
-    /*
     @Test
-    public void getBlockHeader() throws Exception {
+    public void getBlockHeader() throws Throwable {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        electrumClient.start();
+        String hex = electrumClient.getHeader(0);
 
-        electrumClient.sendGetBlockHeaderMessage();
-        String blockString = electrumClient.getResponseLine();
-
-        System.out.println(blockString);
-        assert blockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
-    }*/
-
-/*    @Test
-    public void getBlockHeaderWithRPCClient() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        electrumClient.start();
-
-        electrumClient.sendGetBlockHeaderMessageWithRPCClient();
-        String blockString = electrumClient.getResponseLine();
-
-        System.out.println(blockString);
-        assert blockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
+        System.out.println(hex);
+        assertEquals(HEADER_LENGTH_HEX, hex.length());
     }
-    */
-/*
+
     @Test
-    public void subscribeBlockHeaders() throws Exception {
+    public void subscribeBlockHeaders() throws Throwable {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        electrumClient.start();
+        Stream<SubscribeHeadersResponse> responseStream = electrumClient.subscribeHeaders();
 
-        electrumClient.sendSubscribeMessage();
-        Stream<String> blockStringStream = electrumClient.getResponseLines();
-        String currentBlockString = blockStringStream.findFirst().get();
+        AtomicInteger counter = new AtomicInteger(0);
 
-        assert currentBlockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
-    }*/
+        responseStream.limit(2).forEach(header -> {
+            System.out.println(header);
+            System.out.println(header.hex);
+            System.out.println(header.height);
+            assertEquals(HEADER_LENGTH_HEX, header.hex.length());
+            assert header.height >= 631359;
+            counter.incrementAndGet();
+        });
 
-/*
-    @Test
-    public void subscribeBlockHeadersWithRPCClient() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        electrumClient.start();
-
-        electrumClient.sendSubscribeMessageWithRPCClient();
-        Stream<String> blockStringStream = electrumClient.getResponseLines();
-        String currentBlockString = blockStringStream.findFirst().get();
-
-        assert currentBlockString.startsWith("{\"jsonrpc\": \"2.0\", \"result\":");
-    }*/
+        assertEquals(2, counter.get());
+    }
 
     @Test
     public void getBlockHeaderWithConnectionClass() throws Throwable {
