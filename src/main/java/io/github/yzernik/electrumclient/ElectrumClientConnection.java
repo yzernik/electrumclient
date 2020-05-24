@@ -53,14 +53,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
 
     }
 
-    private void sendNewLine(OutputStream outputStream) throws IOException {
-        outputStream.write("\n".getBytes());
-        outputStream.flush();
-    }
-
     public T makeRequest(OutputStream outputStream, BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
         sendRPCRequest(outputStream, electrumRPCClient);
-        sendNewLine(outputStream);
         return getResponse(in, electrumRPCClient);
     }
 
@@ -69,6 +63,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
     private void sendRPCRequest(OutputStream outputStream, ElectrumRPCClient electrumRPCClient) throws IOException {
         String requestString = getRPCRequest(electrumRPCClient);
         outputStream.write(requestString.getBytes());
+        outputStream.write('\n');
+        outputStream.flush();
     }
 
     abstract T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable;
