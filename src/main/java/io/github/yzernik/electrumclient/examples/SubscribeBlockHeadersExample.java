@@ -14,9 +14,12 @@ public class SubscribeBlockHeadersExample {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         Stream<SubscribeHeadersResponse> headers = electrumClient.subscribeHeaders();
 
+        System.out.println("Starting to read from stream");
         headers.forEach(header -> {
             System.out.println(header);
         });
+        System.out.println("Finished reading from stream");
+        headers.close();
     }
 
 }
