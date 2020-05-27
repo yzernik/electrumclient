@@ -4,7 +4,8 @@ import io.github.yzernik.electrumclient.ElectrumClient;
 
 public class GetBlockHeaderExample {
 
-    private static final String ELECTRUM_HOST = "electrum-server.ninja";
+    // Public electrum server from https://1209k.com/bitcoin-eye/ele.php?chain=btc
+    private static final String ELECTRUM_HOST = "electrumx-core.1209k.com";
     private static final int ELECTRUM_PORT = 50001;
 
     public static void main(String[] args) throws Throwable {

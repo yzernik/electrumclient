@@ -33,7 +33,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
 
     public void makeRequest() {
         try {
-            InetAddress address = AddressLookup.getInetAddress(host);
+            // InetAddress address = AddressLookup.getInetAddress(host);
+            InetAddress address = InetAddress.getByName(host);
             try(
                     Socket clientSocket = new Socket(address, port);
                     OutputStream clientOutputStream = clientSocket.getOutputStream();
