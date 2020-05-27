@@ -6,8 +6,10 @@ import java.util.stream.Stream;
 
 public class SubscribeHeadersClientConnection extends ElectrumClientConnection<ElectrumClientMultiLineResponse<SubscribeHeadersResponse>> {
 
+    private static final int DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT = 1800000;
+
     public SubscribeHeadersClientConnection(String host, int port) {
-        super(host, port);
+        super(host, port, DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT);
     }
 
     @Override
@@ -18,14 +20,13 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     @Override
     ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
         String responseLine = in.readLine();
-        System.out.println("Received initial response line: " + responseLine);
         SubscribeHeadersResponse responseItem = parseResponseLine(responseLine, electrumRPCClient);
 
         Stream<String> lineStream = in.lines();
         Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
-            System.out.println("Received notification response line: " + line);
             return parseNotificationLine(line,electrumRPCClient);
         });
+
         return new ElectrumClientMultiLineResponse<>(responseItem, responseStream);
     }
 
