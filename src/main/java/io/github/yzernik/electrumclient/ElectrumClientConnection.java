@@ -49,17 +49,13 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
                 synchronized(this) {
                     notifyAll();
                 }
-                System.out.println("Notified on available result");
 
-                System.out.println("Waiting for close...");
                 waitForResultClose(result);
-                System.out.println("Closed result");
             }
         } catch (Throwable e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
             threadResult = new ThreadResult(null, e);
         } finally {
-            System.out.println("Finished connection thread.");
             synchronized(this) {
                 notifyAll();
             }
