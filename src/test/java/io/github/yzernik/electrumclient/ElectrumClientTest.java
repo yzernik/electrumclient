@@ -43,6 +43,7 @@ public class ElectrumClientTest {
         AtomicInteger counter = new AtomicInteger(0);
 
         responseStream.limit(2).forEach(header -> {
+            System.out.println("Got header notification: " + header);
             assertEquals(HEADER_LENGTH_HEX, header.hex.length());
             assert header.height >= 631359;
             counter.incrementAndGet();
