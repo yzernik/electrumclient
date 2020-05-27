@@ -20,31 +20,29 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     @Override
     ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
         String responseLine = in.readLine();
+        System.out.println("Got responseLine: " + responseLine);
+
         SubscribeHeadersResponse responseItem = parseResponseLine(responseLine, electrumRPCClient);
+        System.out.println("Got responseItem: " + responseItem);
 
         Stream<String> lineStream = in.lines();
         Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
-            return parseNotificationLine(line,electrumRPCClient);
+            try {
+                return parseNotificationLine(line,electrumRPCClient);
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
         });
 
         return new ElectrumClientMultiLineResponse<>(responseItem, responseStream);
     }
 
-    private SubscribeHeadersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) {
-        try {
-            return electrumRPCClient.parseResponseSubscribeBlockHeaders(line);
-        } catch (Throwable throwable) {
-            return null;
-        }
+    private SubscribeHeadersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws Throwable {
+        return electrumRPCClient.parseResponseSubscribeBlockHeaders(line);
     }
 
-    private SubscribeHeadersResponse parseNotificationLine(String line, ElectrumRPCClient electrumRPCClient) {
-        try {
-            return electrumRPCClient.parseNotificationSubscribeBlockHeaders(line);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            return null;
-        }
+    private SubscribeHeadersResponse parseNotificationLine(String line, ElectrumRPCClient electrumRPCClient) throws Throwable {
+        return electrumRPCClient.parseNotificationSubscribeBlockHeaders(line);
     }
 
 
