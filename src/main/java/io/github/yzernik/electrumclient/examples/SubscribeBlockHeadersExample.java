@@ -19,7 +19,6 @@ public class SubscribeBlockHeadersExample {
             System.out.println(header);
         });
         System.out.println("Finished reading from stream");
-        headers.close();
     }
 
 }

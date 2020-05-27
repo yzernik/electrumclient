@@ -6,13 +6,23 @@ import java.net.Socket;
 
 abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implements Runnable {
 
+    private final static int DEFAULT_SOCKET_TIMEOUT = 0;
+
     private final String host;
     private final int port;
     private ThreadResult threadResult = null;
+    private int socketTimeout;
 
     public ElectrumClientConnection(String host, int port) {
         this.host = host;
         this.port = port;
+        this.socketTimeout = DEFAULT_SOCKET_TIMEOUT;
+    }
+
+    public ElectrumClientConnection(String host, int port, int socketTimeout) {
+        this.host = host;
+        this.port = port;
+        this.socketTimeout = socketTimeout;
     }
 
 
@@ -30,6 +40,7 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
                     InputStream clientInputStream = clientSocket.getInputStream();
                     BufferedReader in = new BufferedReader(new InputStreamReader(clientInputStream))
             ) {
+                clientSocket.setSoTimeout(socketTimeout);
                 ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient();
                 T result = makeRequest(clientOutputStream, in, electrumRPCClient);
                 threadResult = new ThreadResult(result, null);
