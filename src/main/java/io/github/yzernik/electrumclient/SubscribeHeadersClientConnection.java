@@ -6,8 +6,7 @@ import java.util.stream.Stream;
 
 public class SubscribeHeadersClientConnection extends ElectrumClientConnection<ElectrumClientMultiLineResponse<SubscribeHeadersResponse>> {
 
-    // private static final int DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT = 3000000;
-    private static final int DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT = 30000;
+    private static final int DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT = 1800000;
 
     public SubscribeHeadersClientConnection(String host, int port) {
         super(host, port, DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT);
