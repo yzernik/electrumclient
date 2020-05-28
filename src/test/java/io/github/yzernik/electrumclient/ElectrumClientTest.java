@@ -38,7 +38,7 @@ public class ElectrumClientTest {
     @Test
     public void subscribeBlockHeaders() throws Exception {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        Stream<SubscribeHeadersResponse> responseStream = electrumClient.subscribeHeaders();
+        Stream<SubscribeHeadersMessage> responseStream = electrumClient.subscribeHeaders();
 
         AtomicInteger counter = new AtomicInteger(0);
 
@@ -59,8 +59,8 @@ public class ElectrumClientTest {
         Thread t =new Thread(clientConnection);
         t.start();
 
-        ElectrumClientSingleLineResponse<GetHeaderResponse> response = clientConnection.getResult();
-        GetHeaderResponse getHeaderResponse = response.getLine();
+        ElectrumClientSingleLineResponse<GetHeaderMessage> response = clientConnection.getResult();
+        GetHeaderMessage getHeaderResponse = response.getLine();
 
         assertEquals(HEADER_LENGTH_HEX, getHeaderResponse.hex.length());
     }
@@ -73,19 +73,19 @@ public class ElectrumClientTest {
         Thread t =new Thread(clientConnection);
         t.start();
 
-        ElectrumClientMultiLineResponse<SubscribeHeadersResponse> response = clientConnection.getResult();
+        ElectrumClientSubscribeResponse<SubscribeHeadersMessage> response = clientConnection.getResult();
 
         // Test the initial response line
-        SubscribeHeadersResponse responseHeader = response.getLine();
+        SubscribeHeadersMessage responseHeader = response.getLine();
         assertEquals(HEADER_LENGTH_HEX, responseHeader.hex.length());
         assert responseHeader.height >= 631359;
 
         // Test the streaming notification lines
-        Stream<SubscribeHeadersResponse> responseStream = response.getLines();
+        Stream<SubscribeHeadersMessage> responseStream = response.getLines();
         // SubscribeHeadersResponse firstResponse = responseStream.findFirst().get();
         // headerStream.close();
 
-        SubscribeHeadersResponse firstStreamHeader = responseStream.findFirst().get();
+        SubscribeHeadersMessage firstStreamHeader = responseStream.findFirst().get();
         assertEquals(HEADER_LENGTH_HEX, firstStreamHeader.hex.length());
         assert firstStreamHeader.height >= 631359;
     }

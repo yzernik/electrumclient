@@ -37,13 +37,13 @@ public class ElectrumRPCClient {
         }
     }
 
-    public SubscribeHeadersResponse parseResponseSubscribeBlockHeaders(String line) throws ElectrumRPCParseException {
+    public SubscribeHeadersMessage parseResponseSubscribeBlockHeaders(String line) throws ElectrumRPCParseException {
         InputStream lineInputStream = new ByteArrayInputStream(line.getBytes());
 
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            return client.readResponse(SubscribeHeadersResponse.class, lineInputStream);
+            return client.readResponse(SubscribeHeadersMessage.class, lineInputStream);
         } catch (Throwable throwable) {
             throw new ElectrumRPCParseException(throwable);
         }
@@ -53,12 +53,12 @@ public class ElectrumRPCClient {
         return makeRequestString(SUBSCRIBE_BLOCK_HEADERS_REQUEST, new Object[]{ });
     }
 
-    public SubscribeHeadersResponse parseNotificationSubscribeBlockHeaders(String line) throws ElectrumRPCParseException {
+    public SubscribeHeadersMessage parseNotificationSubscribeBlockHeaders(String line) throws ElectrumRPCParseException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(line);
             String paramsLine = jsonNode.get("params").get(0).toString();
-            return mapper.readValue(paramsLine, SubscribeHeadersResponse.class);
+            return mapper.readValue(paramsLine, SubscribeHeadersMessage.class);
         } catch (IOException e) {
             throw new ElectrumRPCParseException(e);
         }

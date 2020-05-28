@@ -24,8 +24,8 @@ public class ElectrumClient {
         Thread t =new Thread(connection);
         t.start();
 
-        ElectrumClientSingleLineResponse<GetHeaderResponse> response = connection.getResult();
-        GetHeaderResponse getHeaderResponse = response.getLine();
+        ElectrumClientSingleLineResponse<GetHeaderMessage> response = connection.getResult();
+        GetHeaderMessage getHeaderResponse = response.getLine();
         return getHeaderResponse.hex;
     }
 
@@ -34,15 +34,15 @@ public class ElectrumClient {
      * @return Stream of block headers
      * @throws
      */
-    public Stream<SubscribeHeadersResponse> subscribeHeaders() throws Exception {
+    public Stream<SubscribeHeadersMessage> subscribeHeaders() throws Exception {
         SubscribeHeadersClientConnection connection = new SubscribeHeadersClientConnection(host, port);
 
         Thread t =new Thread(connection);
         t.start();
 
-        ElectrumClientMultiLineResponse<SubscribeHeadersResponse> response = connection.getResult();
-        SubscribeHeadersResponse subscribeHeadersResponse = response.getLine();
-        Stream<SubscribeHeadersResponse> notifications = response.getLines();
+        ElectrumClientSubscribeResponse<SubscribeHeadersMessage> response = connection.getResult();
+        SubscribeHeadersMessage subscribeHeadersResponse = response.getLine();
+        Stream<SubscribeHeadersMessage> notifications = response.getLines();
         return Stream.concat(Stream.of(subscribeHeadersResponse), notifications);
     }
 
