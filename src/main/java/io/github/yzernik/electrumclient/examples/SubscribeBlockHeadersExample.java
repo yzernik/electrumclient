@@ -11,7 +11,7 @@ public class SubscribeBlockHeadersExample {
     private static final String ELECTRUM_HOST = "electrumx-core.1209k.com";
     private static final int ELECTRUM_PORT = 50001;
 
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Exception {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         Stream<SubscribeHeadersResponse> headers = electrumClient.subscribeHeaders();
 
