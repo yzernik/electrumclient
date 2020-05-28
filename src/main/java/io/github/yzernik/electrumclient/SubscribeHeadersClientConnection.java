@@ -26,9 +26,6 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
         System.out.println("Got responseItem: " + responseItem);
 
         Stream<String> lineStream = in.lines();
-
-        lineStream.iterator().next();
-
         Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
             try {
                 return parseNotificationLine(line,electrumRPCClient);
