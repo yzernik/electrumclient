@@ -1,10 +1,10 @@
 package io.github.yzernik.electrumclient;
 
-public class ElectrumClientSingleLineResponse<S extends ElectrumMessage> implements ElectrumClientResponse {
+public class ElectrumClientSingleLineResult<S extends ElectrumResponse> implements ElectrumClientResult {
 
     private final S line;
 
-    public ElectrumClientSingleLineResponse(S line) {
+    public ElectrumClientSingleLineResult(S line) {
         this.line = line;
     }
 

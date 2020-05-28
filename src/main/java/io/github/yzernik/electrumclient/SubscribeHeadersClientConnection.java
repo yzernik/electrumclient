@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-public class SubscribeHeadersClientConnection extends ElectrumClientConnection<ElectrumClientSubscribeResponse<SubscribeHeadersMessage>> {
+public class SubscribeHeadersClientConnection extends ElectrumClientConnection<SubscribeHeadersResult> {
 
     private static final int DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT = 1800000;
 
@@ -18,15 +18,15 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     }
 
     @Override
-    ElectrumClientSubscribeResponse<SubscribeHeadersMessage> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
+    SubscribeHeadersResult getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         String responseLine = in.readLine();
         System.out.println("Got responseLine: " + responseLine);
 
-        SubscribeHeadersMessage responseItem = parseResponseLine(responseLine, electrumRPCClient);
+        SubscribeHeadersResponse responseItem = parseResponseLine(responseLine, electrumRPCClient);
         System.out.println("Got responseItem: " + responseItem);
 
         Stream<String> lineStream = in.lines();
-        Stream<SubscribeHeadersMessage> responseStream = lineStream.map(line -> {
+        Stream<SubscribeHeadersResponse> responseStream = lineStream.map(line -> {
             try {
                 return parseNotificationLine(line,electrumRPCClient);
             } catch (Throwable throwable) {
@@ -34,14 +34,14 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
             }
         });
 
-        return new ElectrumClientSubscribeResponse<>(responseItem, responseStream);
+        return new SubscribeHeadersResult(responseItem, responseStream);
     }
 
-    private SubscribeHeadersMessage parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
+    private SubscribeHeadersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
         return electrumRPCClient.parseResponseSubscribeBlockHeaders(line);
     }
 
-    private SubscribeHeadersMessage parseNotificationLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
+    private SubscribeHeadersResponse parseNotificationLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
         return electrumRPCClient.parseNotificationSubscribeBlockHeaders(line);
     }
 

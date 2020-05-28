@@ -1,5 +1,5 @@
 package io.github.yzernik.electrumclient;
 
-public interface ElectrumClientResponse {
+public interface ElectrumClientResult {
     void waitUntilComplete();
 }

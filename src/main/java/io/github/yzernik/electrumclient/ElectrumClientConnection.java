@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
-abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implements Runnable {
+abstract class ElectrumClientConnection<T extends ElectrumClientResult> implements Runnable {
 
     private final static int DEFAULT_SOCKET_TIMEOUT = 0;
 

@@ -48,7 +48,7 @@ public class ElectrumRPCClientTest {
     @Test
     public void testParseNotificationSubscribeBlockHeaders() throws Throwable {
         String notificationLine = " {\"jsonrpc\": \"2.0\", \"method\": \"blockchain.headers.subscribe\", \"params\": [{\"hex\": \"00e0ff2730474ed1def5b826e9ffcce8d8c61415fefd398b6c170a000000000000000000f63517f98c86cf28d508f32d2f8aea2e9f8d2a36fdb904198420d40e8c19896660b6c85ef6971217d8193d7b\", \"height\": 631384}]}";
-        SubscribeHeadersMessage response = electrumRPCClient.parseNotificationSubscribeBlockHeaders(notificationLine);
+        SubscribeHeadersResponse response = electrumRPCClient.parseNotificationSubscribeBlockHeaders(notificationLine);
 
         assertEquals(631384, response.height);
         assertEquals(631384, response.height);

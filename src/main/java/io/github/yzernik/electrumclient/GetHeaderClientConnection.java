@@ -3,7 +3,7 @@ package io.github.yzernik.electrumclient;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public class GetHeaderClientConnection extends ElectrumClientConnection<ElectrumClientSingleLineResponse<GetHeaderMessage>> {
+public class GetHeaderClientConnection extends ElectrumClientConnection<GetHeaderResult> {
 
     private final int height;
 
@@ -18,12 +18,12 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<Electrum
     }
 
     @Override
-    ElectrumClientSingleLineResponse<GetHeaderMessage> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
+    GetHeaderResult getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         String line = in.readLine();
         String header = electrumRPCClient.parseResponseGetBlockHeader(line);
 
-        GetHeaderMessage getHeaderResponse = new GetHeaderMessage(header);
-        return new ElectrumClientSingleLineResponse<>(getHeaderResponse);
+        GetHeaderResponse getHeaderResponse = new GetHeaderResponse(header);
+        return new GetHeaderResult(getHeaderResponse);
     }
 
 }
