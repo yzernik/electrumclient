@@ -53,7 +53,10 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
 
                 waitForResultClose(result);
             }
-        } catch (Throwable e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            threadResult = new ThreadResult(null, e);
+        } catch (ElectrumRPCParseException e) {
             e.printStackTrace();
             threadResult = new ThreadResult(null, e);
         } finally {
@@ -64,7 +67,7 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
 
     }
 
-    public T makeRequest(OutputStream outputStream, BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
+    public T makeRequest(OutputStream outputStream, BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         sendRPCRequest(outputStream, electrumRPCClient);
         return getResponse(in, electrumRPCClient);
     }
@@ -78,14 +81,14 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
         outputStream.flush();
     }
 
-    abstract T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable;
+    abstract T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException;
 
     /**
      * Get the result of the connection request.
      * @return Returns the result of the connection request.
      * @throws InterruptedException When the thread is interrupted.
      */
-    public synchronized T getResult() throws Throwable {
+    public synchronized T getResult() throws Exception {
         while (threadResult == null)
             wait();
 
@@ -102,9 +105,9 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
 
     public class ThreadResult {
         private final T result;
-        private final Throwable exception;
+        private final Exception exception;
 
-        public ThreadResult(T result, Throwable exception) {
+        public ThreadResult(T result, Exception exception) {
             this.result = result;
             this.exception = exception;
         }
@@ -113,7 +116,7 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
             return result;
         }
 
-        public Throwable getException() {
+        public Exception getException() {
             return exception;
         }
     }

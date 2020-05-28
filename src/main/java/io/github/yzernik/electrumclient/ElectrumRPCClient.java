@@ -28,28 +28,40 @@ public class ElectrumRPCClient {
         return makeRequestString(GET_BLOCK_HEADER_REQUEST, new Object[]{ height });
     }
 
-    public String parseResponseGetBlockHeader(String line) throws Throwable {
-        InputStream lineInputStream = new ByteArrayInputStream(line.getBytes());
-        return client.readResponse(String.class, lineInputStream);
+    public String parseResponseGetBlockHeader(String line) throws ElectrumRPCParseException {
+        try {
+            InputStream lineInputStream = new ByteArrayInputStream(line.getBytes());
+            return client.readResponse(String.class, lineInputStream);
+        } catch (Throwable throwable) {
+            throw new ElectrumRPCParseException(throwable);
+        }
     }
 
-    public SubscribeHeadersResponse parseResponseSubscribeBlockHeaders(String line) throws Throwable {
+    public SubscribeHeadersResponse parseResponseSubscribeBlockHeaders(String line) throws ElectrumRPCParseException {
         InputStream lineInputStream = new ByteArrayInputStream(line.getBytes());
 
         ObjectMapper mapper = new ObjectMapper();
 
-        return client.readResponse(SubscribeHeadersResponse.class, lineInputStream);
+        try {
+            return client.readResponse(SubscribeHeadersResponse.class, lineInputStream);
+        } catch (Throwable throwable) {
+            throw new ElectrumRPCParseException(throwable);
+        }
     }
 
     public String makeRequestSubscribeBlockHeaders() throws IOException {
         return makeRequestString(SUBSCRIBE_BLOCK_HEADERS_REQUEST, new Object[]{ });
     }
 
-    public SubscribeHeadersResponse parseNotificationSubscribeBlockHeaders(String line) throws Throwable {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(line);
-        String paramsLine = jsonNode.get("params").get(0).toString();
-        return mapper.readValue(paramsLine, SubscribeHeadersResponse.class);
+    public SubscribeHeadersResponse parseNotificationSubscribeBlockHeaders(String line) throws ElectrumRPCParseException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(line);
+            String paramsLine = jsonNode.get("params").get(0).toString();
+            return mapper.readValue(paramsLine, SubscribeHeadersResponse.class);
+        } catch (IOException e) {
+            throw new ElectrumRPCParseException(e);
+        }
     }
 
 }

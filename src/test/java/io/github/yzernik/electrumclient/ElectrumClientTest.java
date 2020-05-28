@@ -28,7 +28,7 @@ public class ElectrumClientTest {
     }
 
     @Test
-    public void getBlockHeader() throws Throwable {
+    public void getBlockHeader() throws Exception {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         String hex = electrumClient.getHeader(0);
 
@@ -36,7 +36,7 @@ public class ElectrumClientTest {
     }
 
     @Test
-    public void subscribeBlockHeaders() throws Throwable {
+    public void subscribeBlockHeaders() throws Exception {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         Stream<SubscribeHeadersResponse> responseStream = electrumClient.subscribeHeaders();
 
@@ -53,7 +53,7 @@ public class ElectrumClientTest {
     }
 
     @Test
-    public void getBlockHeaderWithConnectionClass() throws Throwable {
+    public void getBlockHeaderWithConnectionClass() throws Exception {
         GetHeaderClientConnection clientConnection = new GetHeaderClientConnection(ELECTRUM_HOST, ELECTRUM_PORT, 0);
 
         Thread t =new Thread(clientConnection);
@@ -67,7 +67,7 @@ public class ElectrumClientTest {
 
 
     @Test
-    public void subscribeBlockHeadersWithConnectionClass() throws Throwable {
+    public void subscribeBlockHeadersWithConnectionClass() throws Exception {
         SubscribeHeadersClientConnection clientConnection = new SubscribeHeadersClientConnection(ELECTRUM_HOST, ELECTRUM_PORT);
 
         Thread t =new Thread(clientConnection);
@@ -92,7 +92,7 @@ public class ElectrumClientTest {
 
 
     @Test(expected = IOException.class)
-    public void getBlockHeaderWithConnectionClassBadServer() throws Throwable {
+    public void getBlockHeaderWithConnectionClassBadServer() throws Exception {
         GetHeaderClientConnection clientConnection = new GetHeaderClientConnection("foooooooo", ELECTRUM_PORT, 0);
 
         Thread t =new Thread(clientConnection);

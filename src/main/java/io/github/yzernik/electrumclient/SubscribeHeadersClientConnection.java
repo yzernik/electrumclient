@@ -18,7 +18,7 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
     }
 
     @Override
-    ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
+    ElectrumClientMultiLineResponse<SubscribeHeadersResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         String responseLine = in.readLine();
         System.out.println("Got responseLine: " + responseLine);
 
@@ -37,11 +37,11 @@ public class SubscribeHeadersClientConnection extends ElectrumClientConnection<E
         return new ElectrumClientMultiLineResponse<>(responseItem, responseStream);
     }
 
-    private SubscribeHeadersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws Throwable {
+    private SubscribeHeadersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
         return electrumRPCClient.parseResponseSubscribeBlockHeaders(line);
     }
 
-    private SubscribeHeadersResponse parseNotificationLine(String line, ElectrumRPCClient electrumRPCClient) throws Throwable {
+    private SubscribeHeadersResponse parseNotificationLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
         return electrumRPCClient.parseNotificationSubscribeBlockHeaders(line);
     }
 

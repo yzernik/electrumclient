@@ -18,7 +18,7 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<Electrum
     }
 
     @Override
-    ElectrumClientSingleLineResponse<GetHeaderResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws Throwable {
+    ElectrumClientSingleLineResponse<GetHeaderResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         String line = in.readLine();
         String header = electrumRPCClient.parseResponseGetBlockHeader(line);
 
