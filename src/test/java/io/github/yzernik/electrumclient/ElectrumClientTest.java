@@ -1,5 +1,6 @@
 package io.github.yzernik.electrumclient;
 
+import io.github.yzernik.electrumclient.exceptions.ElectrumClientException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,14 +50,13 @@ public class ElectrumClientTest {
         assert response.height >= 631359;
     }
 
-    @Test(expected = IOException.class)
-    public void getBlockHeaderWithConnectionClassBadServer() throws Exception {
-        GetHeaderClientConnection clientConnection = new GetHeaderClientConnection("foooooooo", ELECTRUM_PORT, 0);
+    @Test(expected = ElectrumClientException.class)
+    public void getBlockHeaderBadServer() throws Exception {
+        ElectrumClient electrumClient = new ElectrumClient("foooooooo", ELECTRUM_PORT);
+        GetHeaderClientConnection connection = electrumClient.getHeader(0);
+        GetHeaderResponse response = connection.getResult();
 
-        Thread t =new Thread(clientConnection);
-        t.start();
-
-        clientConnection.getResult();
+        assertEquals(HEADER_LENGTH_HEX, response.hex.length());
     }
 
 }

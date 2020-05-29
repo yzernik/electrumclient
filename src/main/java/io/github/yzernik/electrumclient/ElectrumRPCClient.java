@@ -3,6 +3,7 @@ package io.github.yzernik.electrumclient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
+import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 
 import java.io.*;
 

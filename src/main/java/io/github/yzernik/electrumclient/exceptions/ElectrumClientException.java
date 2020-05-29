@@ -1,4 +1,4 @@
-package io.github.yzernik.electrumclient;
+package io.github.yzernik.electrumclient.exceptions;
 
 public class ElectrumClientException extends Exception {
 

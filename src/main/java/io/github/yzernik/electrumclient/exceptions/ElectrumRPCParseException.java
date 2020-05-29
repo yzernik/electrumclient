@@ -1,5 +1,6 @@
-package io.github.yzernik.electrumclient;
+package io.github.yzernik.electrumclient.exceptions;
 
+import io.github.yzernik.electrumclient.exceptions.ElectrumClientException;
 
 public class ElectrumRPCParseException extends ElectrumClientException {
 
