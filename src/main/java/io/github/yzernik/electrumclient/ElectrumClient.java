@@ -14,9 +14,8 @@ public class ElectrumClient {
      * Get the hex-encoded block header at the given height.
      * @param height The block height of the requested header.
      * @return A connection that returns a hex-encoded block header
-     * @throws
      */
-    public GetHeaderClientConnection getHeader(int height) throws Exception {
+    public GetHeaderClientConnection getHeader(int height) {
         GetHeaderClientConnection connection = new GetHeaderClientConnection(host, port, height);
 
         Thread t = new Thread(connection);
@@ -28,9 +27,8 @@ public class ElectrumClient {
     /**
      * Subscribe to new blocks, and get notifications as a stream of block headers.
      * @return Stream of block headers
-     * @throws
      */
-    public SubscribeHeadersClientConnection subscribeHeaders(NotificationHandler<SubscribeHeadersResponse> notificationHandler) throws Exception {
+    public SubscribeHeadersClientConnection subscribeHeaders(NotificationHandler<SubscribeHeadersResponse> notificationHandler) {
         SubscribeHeadersClientConnection connection = new SubscribeHeadersClientConnection(host, port, notificationHandler);
 
         Thread t = new Thread(connection);
