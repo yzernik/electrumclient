@@ -37,7 +37,10 @@ public class ElectrumClientTest {
     @Test
     public void subscribeBlockHeaders() throws Exception {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        SubscribeHeadersClientConnection connection = electrumClient.subscribeHeaders();
+        NotificationHandler<SubscribeHeadersResponse> notificationHandler =
+                notification -> System.out.println(notification);
+
+        SubscribeHeadersClientConnection connection = electrumClient.subscribeHeaders(notificationHandler);
         SubscribeHeadersResponse response = connection.getResult();
         connection.close();
 

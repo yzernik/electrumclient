@@ -7,7 +7,7 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<GetHeade
     private final int height;
 
     public GetHeaderClientConnection(String host, int port, int height) {
-        super(host, port);
+        super(host, port, null);
         this.height = height;
     }
 

@@ -13,19 +13,18 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
     private ThreadResult threadResult = null;
     private int socketTimeout;
     private Socket socket;
+    private final NotificationHandler<T> notificationHandler;
 
-    public ElectrumClientConnection(String host, int port) {
-        this.host = host;
-        this.port = port;
-        this.socketTimeout = DEFAULT_SOCKET_TIMEOUT;
+    public ElectrumClientConnection(String host, int port, NotificationHandler<T> notificationHandler) {
+        this(host, port, notificationHandler, DEFAULT_SOCKET_TIMEOUT);
     }
 
-    public ElectrumClientConnection(String host, int port, int socketTimeout) {
+    public ElectrumClientConnection(String host, int port, NotificationHandler<T> notificationHandler, int socketTimeout) {
         this.host = host;
         this.port = port;
+        this.notificationHandler = notificationHandler;
         this.socketTimeout = socketTimeout;
     }
-
 
     @Override
     public void run() {
@@ -100,7 +99,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
             System.out.println("Handling notification line: " + notificationLine);
             T notification = parseNotification(notificationLine, electrumRPCClient);
             System.out.println("Handling notification: " + notification);
-            // TODO: handle the notification
+            notificationHandler.handleNotification(notification);
             notificationLine = in.readLine();
         }
     }
@@ -146,10 +145,6 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
         public Exception getException() {
             return exception;
         }
-    }
-
-    public interface NotificationHandler<S extends ElectrumResponse> {
-        public void handleNotification(S notification);
     }
 
 }

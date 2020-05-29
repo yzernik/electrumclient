@@ -30,8 +30,8 @@ public class ElectrumClient {
      * @return Stream of block headers
      * @throws
      */
-    public SubscribeHeadersClientConnection subscribeHeaders() throws Exception {
-        SubscribeHeadersClientConnection connection = new SubscribeHeadersClientConnection(host, port);
+    public SubscribeHeadersClientConnection subscribeHeaders(NotificationHandler<SubscribeHeadersResponse> notificationHandler) throws Exception {
+        SubscribeHeadersClientConnection connection = new SubscribeHeadersClientConnection(host, port, notificationHandler);
 
         Thread t = new Thread(connection);
         t.start();

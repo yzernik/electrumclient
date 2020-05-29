@@ -1,15 +1,13 @@
 package io.github.yzernik.electrumclient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.stream.Stream;
 
 public class SubscribeHeadersClientConnection extends ElectrumClientConnection<SubscribeHeadersResponse> {
 
     private static final int DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT = 1800000;
 
-    public SubscribeHeadersClientConnection(String host, int port) {
-        super(host, port, DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT);
+    public SubscribeHeadersClientConnection(String host, int port, NotificationHandler<SubscribeHeadersResponse> notificationHandler) {
+        super(host, port,notificationHandler, DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT);
     }
 
     @Override
