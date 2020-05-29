@@ -1,9 +1,8 @@
 package io.github.yzernik.electrumclient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
-public class GetHeaderClientConnection extends ElectrumClientConnection<ElectrumClientSingleLineResponse<GetHeaderResponse>> {
+public class GetHeaderClientConnection extends ElectrumClientConnection<GetHeaderResponse> {
 
     private final int height;
 
@@ -18,12 +17,14 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<Electrum
     }
 
     @Override
-    ElectrumClientSingleLineResponse<GetHeaderResponse> getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
-        String line = in.readLine();
-        String header = electrumRPCClient.parseResponseGetBlockHeader(line);
+    GetHeaderResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
+        String hex = electrumRPCClient.parseResponseGetBlockHeader(line);
+        return new GetHeaderResponse(hex);
+    }
 
-        GetHeaderResponse getHeaderResponse = new GetHeaderResponse(header);
-        return new ElectrumClientSingleLineResponse<>(getHeaderResponse);
+    @Override
+    GetHeaderResponse parseNotification(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
+        return null;
     }
 
 }

@@ -13,12 +13,16 @@ public class SubscribeBlockHeadersExample {
 
     public static void main(String[] args) throws Exception {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        Stream<SubscribeHeadersResponse> headers = electrumClient.subscribeHeaders();
+        SubscribeHeadersResponse response = electrumClient.subscribeHeaders();
+
+        System.out.println("Got initial response");
+        System.out.println(response);
 
         System.out.println("Starting to read from stream");
+        /*
         headers.forEach(header -> {
             System.out.println(header);
-        });
+        });*/
         System.out.println("Finished reading from stream");
     }
 

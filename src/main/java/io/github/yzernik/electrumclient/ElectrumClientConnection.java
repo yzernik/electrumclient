@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
-abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implements Runnable {
+abstract class ElectrumClientConnection<T extends ElectrumResponse> implements Runnable {
 
     private final static int DEFAULT_SOCKET_TIMEOUT = 0;
 
@@ -43,7 +43,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
             ) {
                 clientSocket.setSoTimeout(socketTimeout);
                 ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient();
-                T result = makeRequest(clientOutputStream, in, electrumRPCClient);
+                makeRequest(clientOutputStream, in, electrumRPCClient);
+                T result = getResponse(in, electrumRPCClient);
                 threadResult = new ThreadResult(result, null);
 
                 // Wake up threads blocked on the getResult() method
@@ -51,7 +52,7 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
                     notifyAll();
                 }
 
-                waitForResultClose(result);
+                handleNotifications(in, electrumRPCClient);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,9 +68,8 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
 
     }
 
-    public T makeRequest(OutputStream outputStream, BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
+    public void makeRequest(OutputStream outputStream, BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         sendRPCRequest(outputStream, electrumRPCClient);
-        return getResponse(in, electrumRPCClient);
     }
 
     abstract String getRPCRequest(ElectrumRPCClient electrumRPCClient) throws IOException;
@@ -81,7 +81,30 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
         outputStream.flush();
     }
 
-    abstract T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException;
+    T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
+        String responseLine = in.readLine();
+        System.out.println("Got responseLine: " + responseLine);
+
+        T responseItem = parseResponseLine(responseLine, electrumRPCClient);
+        System.out.println("Got responseItem: " + responseItem);
+
+        return responseItem;
+    }
+
+    void handleNotifications(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
+        String notificationLine = in.readLine();
+        while (notificationLine != null) {
+            System.out.println("Handling notification line: " + notificationLine);
+            T notification = parseNotification(notificationLine, electrumRPCClient);
+            System.out.println("Handling notification: " + notification);
+            // TODO: handle the notification
+        }
+    }
+
+    abstract T parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException;
+
+    abstract T parseNotification(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException;
+
 
     /**
      * Get the result of the connection request.
@@ -97,10 +120,6 @@ abstract class ElectrumClientConnection<T extends ElectrumClientResponse> implem
         }
 
         return threadResult.getResult();
-    }
-
-    private void waitForResultClose(T result) {
-        result.waitUntilComplete();
     }
 
     public class ThreadResult {
