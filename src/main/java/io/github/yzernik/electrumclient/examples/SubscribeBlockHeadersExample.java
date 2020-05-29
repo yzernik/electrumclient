@@ -1,9 +1,8 @@
 package io.github.yzernik.electrumclient.examples;
 
 import io.github.yzernik.electrumclient.ElectrumClient;
+import io.github.yzernik.electrumclient.SubscribeHeadersClientConnection;
 import io.github.yzernik.electrumclient.SubscribeHeadersResponse;
-
-import java.util.stream.Stream;
 
 public class SubscribeBlockHeadersExample {
 
@@ -13,17 +12,15 @@ public class SubscribeBlockHeadersExample {
 
     public static void main(String[] args) throws Exception {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        SubscribeHeadersResponse response = electrumClient.subscribeHeaders();
+        SubscribeHeadersClientConnection connection = electrumClient.subscribeHeaders();
 
+        SubscribeHeadersResponse response = connection.getResult();
         System.out.println("Got initial response");
         System.out.println(response);
 
-        System.out.println("Starting to read from stream");
-        /*
-        headers.forEach(header -> {
-            System.out.println(header);
-        });*/
-        System.out.println("Finished reading from stream");
+        Thread.sleep(10000);
+        System.out.println("Closing connection");
+        connection.close();
     }
 
 }

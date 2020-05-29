@@ -12,6 +12,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
     private final int port;
     private ThreadResult threadResult = null;
     private int socketTimeout;
+    private Socket socket;
 
     public ElectrumClientConnection(String host, int port) {
         this.host = host;
@@ -41,6 +42,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
                     InputStream clientInputStream = clientSocket.getInputStream();
                     BufferedReader in = new BufferedReader(new InputStreamReader(clientInputStream))
             ) {
+                socket = clientSocket;
                 clientSocket.setSoTimeout(socketTimeout);
                 ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient();
                 makeRequest(clientOutputStream, in, electrumRPCClient);
@@ -122,6 +124,10 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
         }
 
         return threadResult.getResult();
+    }
+
+    public void close() throws IOException {
+        socket.close();
     }
 
     public class ThreadResult {
