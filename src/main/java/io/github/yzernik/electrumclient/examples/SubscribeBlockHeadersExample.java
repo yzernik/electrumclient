@@ -1,6 +1,9 @@
 package io.github.yzernik.electrumclient.examples;
 
 import io.github.yzernik.electrumclient.*;
+import io.github.yzernik.electrumclient.exceptions.ElectrumClientException;
+
+import java.io.IOException;
 
 public class SubscribeBlockHeadersExample {
 
@@ -8,7 +11,7 @@ public class SubscribeBlockHeadersExample {
     private static final String ELECTRUM_HOST = "electrumx-core.1209k.com";
     private static final int ELECTRUM_PORT = 50001;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws InterruptedException, ElectrumClientException, IOException {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         NotificationHandler<SubscribeHeadersResponse> notificationHandler =
                 notification -> System.out.println(notification);

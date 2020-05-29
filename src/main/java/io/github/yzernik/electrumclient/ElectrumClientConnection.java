@@ -14,7 +14,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
 
     private final String host;
     private final int port;
-    private ThreadResult threadResult = null;
+    private RequestResult requestResult = null;
     private int socketTimeout;
     private Socket socket;
     private final NotificationHandler<T> notificationHandler;
@@ -50,7 +50,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
                 ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient();
                 makeRequest(clientOutputStream, in, electrumRPCClient);
                 T result = getResponse(in, electrumRPCClient);
-                threadResult = new ThreadResult(result, null);
+                requestResult = new RequestResult(result, null);
 
                 // Wake up threads blocked on the getResult() method
                 synchronized(this) {
@@ -61,10 +61,10 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
             }
         } catch (IOException e) {
             e.printStackTrace();
-            threadResult = new ThreadResult(null, new ElectrumIOException(e));
+            requestResult = new RequestResult(null, new ElectrumIOException(e));
         } catch (ElectrumRPCParseException e) {
             e.printStackTrace();
-            threadResult = new ThreadResult(null, e);
+            requestResult = new RequestResult(null, e);
         } finally {
             synchronized(this) {
                 notifyAll();
@@ -125,25 +125,25 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
      * @throws InterruptedException When the thread is interrupted.
      */
     public synchronized T getResult() throws ElectrumClientException, InterruptedException {
-        while (threadResult == null)
+        while (requestResult == null)
             wait();
 
-        if (threadResult.getException() != null) {
-            throw threadResult.getException();
+        if (requestResult.getException() != null) {
+            throw requestResult.getException();
         }
 
-        return threadResult.getResult();
+        return requestResult.getResult();
     }
 
     public void close() throws IOException {
         socket.close();
     }
 
-    public class ThreadResult {
+    public class RequestResult {
         private final T result;
         private final ElectrumClientException exception;
 
-        public ThreadResult(T result, ElectrumClientException exception) {
+        public RequestResult(T result, ElectrumClientException exception) {
             this.result = result;
             this.exception = exception;
         }
