@@ -136,9 +136,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
     }
 
     public void close() throws IOException {
-        if (!socket.isClosed()) {
-            socket.close();
-        }
+        socket.close();
     }
 
     public class ThreadResult {
