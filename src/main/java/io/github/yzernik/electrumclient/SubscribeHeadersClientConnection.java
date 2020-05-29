@@ -1,5 +1,7 @@
 package io.github.yzernik.electrumclient;
 
+import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
+
 import java.io.IOException;
 
 public class SubscribeHeadersClientConnection extends ElectrumClientConnection<SubscribeHeadersResponse> {

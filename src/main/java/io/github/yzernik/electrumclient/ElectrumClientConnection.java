@@ -1,5 +1,9 @@
 package io.github.yzernik.electrumclient;
 
+import io.github.yzernik.electrumclient.exceptions.ElectrumClientException;
+import io.github.yzernik.electrumclient.exceptions.ElectrumIOException;
+import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -57,7 +61,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
             }
         } catch (IOException e) {
             e.printStackTrace();
-            threadResult = new ThreadResult(null, e);
+            threadResult = new ThreadResult(null, new ElectrumIOException(e));
         } catch (ElectrumRPCParseException e) {
             e.printStackTrace();
             threadResult = new ThreadResult(null, e);
@@ -114,7 +118,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
      * @return Returns the result of the connection request.
      * @throws InterruptedException When the thread is interrupted.
      */
-    public synchronized T getResult() throws Exception {
+    public synchronized T getResult() throws ElectrumClientException, InterruptedException {
         while (threadResult == null)
             wait();
 
@@ -131,9 +135,9 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
 
     public class ThreadResult {
         private final T result;
-        private final Exception exception;
+        private final ElectrumClientException exception;
 
-        public ThreadResult(T result, Exception exception) {
+        public ThreadResult(T result, ElectrumClientException exception) {
             this.result = result;
             this.exception = exception;
         }
@@ -142,7 +146,7 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
             return result;
         }
 
-        public Exception getException() {
+        public ElectrumClientException getException() {
             return exception;
         }
     }
