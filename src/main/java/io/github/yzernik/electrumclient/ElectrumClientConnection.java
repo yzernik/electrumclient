@@ -89,6 +89,9 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
     T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         String responseLine = in.readLine();
         System.out.println("Got responseLine: " + responseLine);
+        if (responseLine == null) {
+            throw new ElectrumRPCParseException("Null response line.");
+        }
 
         T responseItem = parseResponseLine(responseLine, electrumRPCClient);
         System.out.println("Got responseItem: " + responseItem);
@@ -99,8 +102,11 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
     void handleNotifications(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         System.out.println("Handling notification lines...");
         String notificationLine = in.readLine();
-        while (notificationLine != null) {
+        while (true) {
             System.out.println("Handling notification line: " + notificationLine);
+            if (notificationLine == null) {
+                throw new ElectrumRPCParseException("Null notification line.");
+            }
             T notification = parseNotification(notificationLine, electrumRPCClient);
             System.out.println("Handling notification: " + notification);
             notificationHandler.handleNotification(notification);
