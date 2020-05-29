@@ -92,12 +92,14 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
     }
 
     void handleNotifications(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
+        System.out.println("Handling notification lines...");
         String notificationLine = in.readLine();
         while (notificationLine != null) {
             System.out.println("Handling notification line: " + notificationLine);
             T notification = parseNotification(notificationLine, electrumRPCClient);
             System.out.println("Handling notification: " + notification);
             // TODO: handle the notification
+            notificationLine = in.readLine();
         }
     }
 
@@ -138,6 +140,10 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements R
         public Exception getException() {
             return exception;
         }
+    }
+
+    public interface NotificationHandler<S extends ElectrumResponse> {
+        public void handleNotification(S notification);
     }
 
 }
