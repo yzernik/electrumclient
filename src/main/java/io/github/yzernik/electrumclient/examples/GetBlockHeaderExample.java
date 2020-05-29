@@ -1,6 +1,8 @@
 package io.github.yzernik.electrumclient.examples;
 
 import io.github.yzernik.electrumclient.ElectrumClient;
+import io.github.yzernik.electrumclient.GetHeaderClientConnection;
+import io.github.yzernik.electrumclient.GetHeaderResponse;
 
 public class GetBlockHeaderExample {
 
@@ -10,9 +12,10 @@ public class GetBlockHeaderExample {
 
     public static void main(String[] args) throws Exception {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
-        String hex = electrumClient.getHeader(631515);
+        GetHeaderClientConnection connection = electrumClient.getHeader(631515);
 
-        System.out.println("block header hex: " + hex);
+        GetHeaderResponse response = connection.getResult();
+        System.out.println("block header hex: " + response.hex);
     }
 
 }

@@ -1,7 +1,5 @@
 package io.github.yzernik.electrumclient;
 
-import java.util.stream.Stream;
-
 public class ElectrumClient {
 
     private final String host;
@@ -15,18 +13,16 @@ public class ElectrumClient {
     /**
      * Get the hex-encoded block header at the given height.
      * @param height The block height of the requested header.
-     * @return A hex-encoded block header
+     * @return A connection that returns a hex-encoded block header
      * @throws
      */
-    public String getHeader(int height) throws Exception {
+    public GetHeaderClientConnection getHeader(int height) throws Exception {
         GetHeaderClientConnection connection = new GetHeaderClientConnection(host, port, height);
 
-        Thread t =new Thread(connection);
+        Thread t = new Thread(connection);
         t.start();
 
-        ElectrumClientSingleLineResponse<GetHeaderResponse> response = connection.getResult();
-        GetHeaderResponse getHeaderResponse = response.getLine();
-        return getHeaderResponse.hex;
+        return connection;
     }
 
     /**
@@ -34,16 +30,13 @@ public class ElectrumClient {
      * @return Stream of block headers
      * @throws
      */
-    public Stream<SubscribeHeadersResponse> subscribeHeaders() throws Exception {
-        SubscribeHeadersClientConnection connection = new SubscribeHeadersClientConnection(host, port);
+    public SubscribeHeadersClientConnection subscribeHeaders(NotificationHandler<SubscribeHeadersResponse> notificationHandler) throws Exception {
+        SubscribeHeadersClientConnection connection = new SubscribeHeadersClientConnection(host, port, notificationHandler);
 
-        Thread t =new Thread(connection);
+        Thread t = new Thread(connection);
         t.start();
 
-        ElectrumClientMultiLineResponse<SubscribeHeadersResponse> response = connection.getResult();
-        SubscribeHeadersResponse subscribeHeadersResponse = response.getLine();
-        Stream<SubscribeHeadersResponse> notifications = response.getLines();
-        return Stream.concat(Stream.of(subscribeHeadersResponse), notifications);
+        return connection;
     }
 
 }
