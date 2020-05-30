@@ -4,6 +4,8 @@ import io.github.yzernik.electrumclient.*;
 import io.github.yzernik.electrumclient.exceptions.ElectrumClientException;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class SubscribeBlockHeadersExample {
 
@@ -11,20 +13,16 @@ public class SubscribeBlockHeadersExample {
     private static final String ELECTRUM_HOST = "electrumx-core.1209k.com";
     private static final int ELECTRUM_PORT = 50001;
 
-    public static void main(String[] args) throws InterruptedException, ElectrumClientException, IOException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         NotificationHandler<SubscribeHeadersResponse> notificationHandler =
                 notification -> System.out.println(notification);
 
-        SubscribeHeadersClientConnection connection = electrumClient.subscribeHeaders(notificationHandler);
-
-        SubscribeHeadersResponse response = connection.getResult();
-        System.out.println("Got initial response");
-        System.out.println(response);
-
-        Thread.sleep(1800000);
-        System.out.println("Closing connection");
-        connection.close();
+        System.out.println("Calling subscribeHeaders.");
+        Future<SubscribeHeadersResponse> responseFuture = electrumClient.subscribeHeaders(notificationHandler);
+        System.out.println("Got response future.");
+        Thread.sleep(10000);
+        responseFuture.cancel(true);
     }
 
 }
