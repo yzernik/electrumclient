@@ -1,11 +1,9 @@
 package io.github.yzernik.electrumclient;
 
-import io.github.yzernik.electrumclient.exceptions.ElectrumClientException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
