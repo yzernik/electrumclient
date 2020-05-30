@@ -27,7 +27,11 @@ abstract public class ElectrumClientSubscribeConnection<T extends ElectrumRespon
         System.out.println("Handling notification lines...");
         String notificationLine = in.readLine();
         while (true) {
-            System.out.println("Handling notification line: " + notificationLine);
+            System.out.println("Handling notification line step 1: " + notificationLine);
+            if (Thread.interrupted()) {
+                return;
+            }
+            System.out.println("Handling notification line step 2: " + notificationLine);
             if (notificationLine == null) {
                 throw new ElectrumRPCParseException("Null notification line.");
             }
