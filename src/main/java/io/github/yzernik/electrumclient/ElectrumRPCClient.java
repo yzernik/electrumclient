@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
+import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponse;
 
 import java.io.*;
 
@@ -60,6 +61,15 @@ public class ElectrumRPCClient {
             JsonNode jsonNode = mapper.readTree(line);
             String paramsLine = jsonNode.get("params").get(0).toString();
             return mapper.readValue(paramsLine, SubscribeHeadersResponse.class);
+        } catch (IOException e) {
+            throw new ElectrumRPCParseException(e);
+        }
+    }
+
+    public SubscribePeersResponse parseSubscribePeersResult(String line) throws ElectrumRPCParseException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(line, SubscribePeersResponse.class);
         } catch (IOException e) {
             throw new ElectrumRPCParseException(e);
         }
