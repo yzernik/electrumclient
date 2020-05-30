@@ -48,7 +48,7 @@ public class ElectrumClientTest {
     public void subscribeBlockHeaders() throws Exception {
         BlockingQueue<SubscribeHeadersResponse> responsesQueue = new LinkedBlockingQueue<>();
 
-        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
+        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT, executorService);
         NotificationHandler<SubscribeHeadersResponse> notificationHandler =
                 notification -> {
             System.out.println("Handling notification in test: " + notification);
@@ -72,14 +72,11 @@ public class ElectrumClientTest {
         responseFuture.cancel(true);
     }
 
-    /*
-    @Test(expected = ElectrumClientException.class)
+    @Test(expected = ExecutionException.class)
     public void getBlockHeaderBadServer() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient("foooooooo", ELECTRUM_PORT);
-        GetHeaderClientConnection connection = electrumClient.getHeader(0);
-        GetHeaderResponse response = connection.getResult();
-
-        assertEquals(HEADER_LENGTH_HEX, response.hex.length());
-    }*/
+        ElectrumClient electrumClient = new ElectrumClient("foooooooo", ELECTRUM_PORT, executorService);
+        Future<GetHeaderResponse> responseFuture = electrumClient.getHeader(0);
+        responseFuture.get();
+    }
 
 }
