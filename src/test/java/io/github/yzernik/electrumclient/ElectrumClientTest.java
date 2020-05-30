@@ -40,7 +40,10 @@ public class ElectrumClientTest {
         assertEquals(HEADER_LENGTH_HEX, response.hex.length());
     }
 
-
+    /**
+     * Take two items from the notification handler, and then stop the connection.
+     * @throws Exception
+     */
     @Test
     public void subscribeBlockHeaders() throws Exception {
         BlockingQueue<SubscribeHeadersResponse> responsesQueue = new LinkedBlockingQueue<>();
@@ -48,20 +51,25 @@ public class ElectrumClientTest {
         ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT);
         NotificationHandler<SubscribeHeadersResponse> notificationHandler =
                 notification -> {
-            System.out.println(notification);
+            System.out.println("Handling notification in test: " + notification);
             responsesQueue.add(notification);
         };
 
         System.out.println("Calling subscribeHeaders.");
         Future<SubscribeHeadersResponse> responseFuture = electrumClient.subscribeHeaders(notificationHandler);
         System.out.println("Got response future.");
-        Thread.sleep(10000);
-        responseFuture.cancel(true);
 
         SubscribeHeadersResponse firstResponse = responsesQueue.take();
-        System.out.println("Got header notification: " + firstResponse);
+        System.out.println("Got first response: " + firstResponse);
         assertEquals(HEADER_LENGTH_HEX, firstResponse.hex.length());
         assert firstResponse.height >= 631359;
+
+        SubscribeHeadersResponse secondResponse = responsesQueue.take();
+        System.out.println("Got second response: " + secondResponse);
+        assertEquals(HEADER_LENGTH_HEX, secondResponse.hex.length());
+        assert secondResponse.height >= 631359;
+
+        responseFuture.cancel(true);
     }
 
     /*
