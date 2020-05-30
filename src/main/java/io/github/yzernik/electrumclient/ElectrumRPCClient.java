@@ -1,10 +1,13 @@
 package io.github.yzernik.electrumclient;
 
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponse;
+import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponseDeserializer;
 
 import java.io.*;
 
@@ -12,11 +15,17 @@ public class ElectrumRPCClient {
 
     private static final String GET_BLOCK_HEADER_REQUEST = "blockchain.block.header";
     private static final String SUBSCRIBE_BLOCK_HEADERS_REQUEST = "blockchain.headers.subscribe";
+    private static final String SUBSCRIBE_PEERS_REQUEST = "server.peers.subscribe";
 
     private final JsonRpcClient client;
 
     public ElectrumRPCClient() {
-        client = new JsonRpcClient();
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule customModule = new SimpleModule("SubscribePeersModule", new Version(0, 1, 0, null));
+        customModule.addDeserializer(SubscribePeersResponse.class, new SubscribePeersResponseDeserializer());
+        mapper.registerModule(customModule);
+
+        client = new JsonRpcClient(mapper);
     }
 
     private String makeRequestString(String methodName, Object argument) throws IOException {
@@ -67,12 +76,17 @@ public class ElectrumRPCClient {
     }
 
     public SubscribePeersResponse parseSubscribePeersResult(String line) throws ElectrumRPCParseException {
+        InputStream lineInputStream = new ByteArrayInputStream(line.getBytes());
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(line, SubscribePeersResponse.class);
-        } catch (IOException e) {
-            throw new ElectrumRPCParseException(e);
+            return client.readResponse(SubscribePeersResponse.class, lineInputStream);
+        } catch (Throwable throwable) {
+            throw new ElectrumRPCParseException(throwable);
         }
+    }
+
+
+    public String makeRequestSubscribePeers() throws IOException {
+        return makeRequestString(SUBSCRIBE_PEERS_REQUEST, new Object[]{ });
     }
 
 }

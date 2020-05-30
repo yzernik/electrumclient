@@ -1,5 +1,6 @@
 package io.github.yzernik.electrumclient;
 
+import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,6 +71,18 @@ public class ElectrumClientTest {
         assert secondResponse.height >= 631359;
 
         responseFuture.cancel(true);
+    }
+
+
+    @Test
+    public void testSubscribePeers() throws Exception {
+        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT, executorService);
+        Future<SubscribePeersResponse> responseFuture = electrumClient.subscribePeers();
+
+        SubscribePeersResponse response = responseFuture.get();
+        System.out.println("Subscribe peers response: " + response);
+
+        assert(response.peers.size() > 0);
     }
 
     @Test(expected = ExecutionException.class)

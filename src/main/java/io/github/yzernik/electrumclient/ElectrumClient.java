@@ -1,8 +1,10 @@
 package io.github.yzernik.electrumclient;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.*;
+import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponse;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ElectrumClient {
 
@@ -27,7 +29,6 @@ public class ElectrumClient {
      */
     public Future<GetHeaderResponse> getHeader(int height) {
         GetHeaderClientConnection task = new GetHeaderClientConnection(host, port, height);
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
         return executorService.submit(task);
     }
 
@@ -37,7 +38,16 @@ public class ElectrumClient {
      */
     public Future<SubscribeHeadersResponse> subscribeHeaders(NotificationHandler<SubscribeHeadersResponse> notificationHandler) {
         SubscribeHeadersClientConnection task = new SubscribeHeadersClientConnection(host, port, notificationHandler);
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        return executorService.submit(task);
+    }
+
+
+    /**
+     * Get the connected peers. This is not actually a subscription.
+     * @return Future of a subscribepeersresponse object.
+     */
+    public Future<SubscribePeersResponse> subscribePeers() {
+        SubscribePeersClientConnection task = new SubscribePeersClientConnection(host, port);
         return executorService.submit(task);
     }
 

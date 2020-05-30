@@ -5,24 +5,21 @@ import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponse;
 
 import java.io.IOException;
 
-public class SubscribePeersClientConnection extends ElectrumClientSubscribeConnection<SubscribePeersResponse> {
+public class SubscribePeersClientConnection extends ElectrumClientConnection<SubscribePeersResponse> {
 
-    public SubscribePeersClientConnection(String host, int port, NotificationHandler<SubscribePeersResponse> notificationHandler) {
-        super(host, port, notificationHandler);
+    public SubscribePeersClientConnection(String host, int port) {
+        super(host, port);
     }
 
     @Override
     String getRPCRequest(ElectrumRPCClient electrumRPCClient) throws IOException {
-        return null;
+        return electrumRPCClient.makeRequestSubscribePeers();
     }
 
     @Override
     SubscribePeersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
-        return null;
+        System.out.println("Got subscribe peers response line: " + line);
+        return electrumRPCClient.parseSubscribePeersResult(line);
     }
 
-    @Override
-    SubscribePeersResponse parseNotification(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
-        return null;
-    }
 }

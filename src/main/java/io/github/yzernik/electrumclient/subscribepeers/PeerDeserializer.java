@@ -15,7 +15,6 @@ class PeerDeserializer extends JsonDeserializer<Peer> {
     public Peer deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.readValueAsTree();
         String featuresListLine = node.get(2).toString();
-        System.out.println("featuresListLine: " + featuresListLine);
         PeerServerFeatures peerServerFeatures = parsePeerServerFeatures(featuresListLine);
         return new Peer(node.get(0).textValue(), node.get(1).textValue(), peerServerFeatures);
     }
