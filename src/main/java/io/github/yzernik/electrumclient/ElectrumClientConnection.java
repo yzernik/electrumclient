@@ -1,6 +1,5 @@
 package io.github.yzernik.electrumclient;
 
-import io.github.yzernik.electrumclient.exceptions.ElectrumClientException;
 import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 
 import java.io.*;
@@ -14,19 +13,15 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements C
 
     private final String host;
     private final int port;
-    // private RequestResult requestResult = null;
     private int socketTimeout;
-    private Socket socket;
-    private final NotificationHandler<T> notificationHandler;
 
-    public ElectrumClientConnection(String host, int port, NotificationHandler<T> notificationHandler) {
-        this(host, port, notificationHandler, DEFAULT_SOCKET_TIMEOUT);
+    public ElectrumClientConnection(String host, int port) {
+        this(host, port, DEFAULT_SOCKET_TIMEOUT);
     }
 
-    public ElectrumClientConnection(String host, int port, NotificationHandler<T> notificationHandler, int socketTimeout) {
+    public ElectrumClientConnection(String host, int port, int socketTimeout) {
         this.host = host;
         this.port = port;
-        this.notificationHandler = notificationHandler;
         this.socketTimeout = socketTimeout;
     }
 
@@ -43,7 +38,6 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements C
                 InputStream clientInputStream = clientSocket.getInputStream();
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientInputStream))
         ) {
-            socket = clientSocket;
             clientSocket.setSoTimeout(socketTimeout);
             ElectrumRPCClient electrumRPCClient = new ElectrumRPCClient();
             sendRequest(clientOutputStream, electrumRPCClient);
@@ -79,62 +73,6 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements C
         return responseItem;
     }
 
-    void handleNotifications(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
-        System.out.println("Handling notification lines...");
-        String notificationLine = in.readLine();
-        while (true) {
-            System.out.println("Handling notification line: " + notificationLine);
-            if (notificationLine == null) {
-                throw new ElectrumRPCParseException("Null notification line.");
-            }
-            T notification = parseNotification(notificationLine, electrumRPCClient);
-            System.out.println("Handling notification: " + notification);
-            notificationHandler.handleNotification(notification);
-            notificationLine = in.readLine();
-        }
-    }
-
     abstract T parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException;
-
-    abstract T parseNotification(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException;
-
-
-    /**
-     * Get the result of the connection request.
-     * @return Returns the result of the connection request.
-     * @throws InterruptedException When the thread is interrupted.
-     */
-/*    public synchronized T getResult() throws ElectrumClientException, InterruptedException {
-        while (requestResult == null)
-            wait();
-
-        if (requestResult.getException() != null) {
-            throw requestResult.getException();
-        }
-
-        return requestResult.getResult();
-    }*/
-/*
-    public void close() throws IOException {
-        socket.close();
-    }*/
-/*
-    public class RequestResult {
-        private final T result;
-        private final ElectrumClientException exception;
-
-        public RequestResult(T result, ElectrumClientException exception) {
-            this.result = result;
-            this.exception = exception;
-        }
-
-        public T getResult() {
-            return result;
-        }
-
-        public ElectrumClientException getException() {
-            return exception;
-        }
-    }*/
 
 }

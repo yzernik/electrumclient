@@ -9,7 +9,7 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<GetHeade
     private final int height;
 
     public GetHeaderClientConnection(String host, int port, int height) {
-        super(host, port, null);
+        super(host, port);
         this.height = height;
     }
 
@@ -22,11 +22,6 @@ public class GetHeaderClientConnection extends ElectrumClientConnection<GetHeade
     GetHeaderResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
         String hex = electrumRPCClient.parseResponseGetBlockHeader(line);
         return new GetHeaderResponse(hex);
-    }
-
-    @Override
-    GetHeaderResponse parseNotification(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
-        return null;
     }
 
 }

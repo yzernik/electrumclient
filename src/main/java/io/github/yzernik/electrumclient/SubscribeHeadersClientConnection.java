@@ -4,12 +4,12 @@ import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 
 import java.io.IOException;
 
-public class SubscribeHeadersClientConnection extends ElectrumClientConnection<SubscribeHeadersResponse> {
+public class SubscribeHeadersClientConnection extends ElectrumClientSubscribeConnection<SubscribeHeadersResponse> {
 
     private static final int DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT = 1800000;
 
     public SubscribeHeadersClientConnection(String host, int port, NotificationHandler<SubscribeHeadersResponse> notificationHandler) {
-        super(host, port,notificationHandler, DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT);
+        super(host, port, notificationHandler, DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT);
     }
 
     @Override
