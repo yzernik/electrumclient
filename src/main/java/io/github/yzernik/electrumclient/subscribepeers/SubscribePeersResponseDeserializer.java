@@ -33,9 +33,4 @@ public class SubscribePeersResponseDeserializer extends JsonDeserializer<Subscri
         return mapper.readValue(peerLine, Peer.class);
     }
 
-    private PeerServerFeatures parsePeerServerFeatures(String featuresListLine) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<String> featuresList = mapper.readValue(featuresListLine, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
-        return new PeerServerFeatures(featuresList);
-    }
 }
