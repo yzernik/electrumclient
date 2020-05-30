@@ -3,13 +3,16 @@ package io.github.yzernik.electrumclient;
 import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class GetHeaderClientConnection extends ElectrumClientConnection<GetHeaderResponse> {
 
     private final int height;
 
-    public GetHeaderClientConnection(String host, int port, int height) {
-        super(host, port);
+    public GetHeaderClientConnection(InetSocketAddress address, int height) {
+        super(address);
         this.height = height;
     }
 

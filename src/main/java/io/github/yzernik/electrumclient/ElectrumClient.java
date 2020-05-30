@@ -2,24 +2,23 @@ package io.github.yzernik.electrumclient;
 
 import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponse;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class ElectrumClient {
 
-    private final String host;
-    private final int port;
+    private final InetSocketAddress address;
     private ExecutorService executorService;
 
-    public ElectrumClient(String host, int port, ExecutorService executorService) {
-        this.host = host;
-        this.port = port;
+    public ElectrumClient(InetSocketAddress address, ExecutorService executorService) {
+        this.address = address;
         this.executorService = executorService;
     }
 
-    public ElectrumClient(String host, int port) {
-        this(host, port, Executors.newSingleThreadExecutor());
+    public ElectrumClient(InetSocketAddress address) {
+        this(address, Executors.newSingleThreadExecutor());
     }
 
     /**
@@ -28,7 +27,7 @@ public class ElectrumClient {
      * @return Future of a getheader response object.
      */
     public Future<GetHeaderResponse> getHeader(int height) {
-        GetHeaderClientConnection task = new GetHeaderClientConnection(host, port, height);
+        GetHeaderClientConnection task = new GetHeaderClientConnection(address, height);
         return executorService.submit(task);
     }
 
@@ -37,7 +36,7 @@ public class ElectrumClient {
      * @return Future of a subscribeheadersresponse response object.
      */
     public Future<SubscribeHeadersResponse> subscribeHeaders(NotificationHandler<SubscribeHeadersResponse> notificationHandler) {
-        SubscribeHeadersClientConnection task = new SubscribeHeadersClientConnection(host, port, notificationHandler);
+        SubscribeHeadersClientConnection task = new SubscribeHeadersClientConnection(address, notificationHandler);
         return executorService.submit(task);
     }
 
@@ -47,7 +46,7 @@ public class ElectrumClient {
      * @return Future of a subscribepeersresponse object.
      */
     public Future<SubscribePeersResponse> subscribePeers() {
-        SubscribePeersClientConnection task = new SubscribePeersClientConnection(host, port);
+        SubscribePeersClientConnection task = new SubscribePeersClientConnection(address);
         return executorService.submit(task);
     }
 

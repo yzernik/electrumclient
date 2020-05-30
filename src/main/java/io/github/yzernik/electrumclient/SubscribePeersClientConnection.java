@@ -4,11 +4,12 @@ import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponse;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
 public class SubscribePeersClientConnection extends ElectrumClientConnection<SubscribePeersResponse> {
 
-    public SubscribePeersClientConnection(String host, int port) {
-        super(host, port);
+    public SubscribePeersClientConnection(InetSocketAddress address) {
+        super(address);
     }
 
     @Override
