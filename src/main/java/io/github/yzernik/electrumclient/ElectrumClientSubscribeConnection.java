@@ -4,6 +4,7 @@ import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
 abstract public class ElectrumClientSubscribeConnection<T extends ElectrumResponse> extends ElectrumClientConnection<T> {
 
@@ -11,13 +12,13 @@ abstract public class ElectrumClientSubscribeConnection<T extends ElectrumRespon
 
     private NotificationHandler<T> notificationHandler;
 
-    public ElectrumClientSubscribeConnection(String host, int port, NotificationHandler<T> notificationHandler) {
-        super(host, port, DEFAULT_SUBSCRIBE_SOCKET_TIMEOUT);
+    public ElectrumClientSubscribeConnection(InetSocketAddress address, NotificationHandler<T> notificationHandler) {
+        super(address, DEFAULT_SUBSCRIBE_SOCKET_TIMEOUT);
         this.notificationHandler = notificationHandler;
     }
 
-    public ElectrumClientSubscribeConnection(String host, int port, NotificationHandler<T> notificationHandler, int socketTimeout) {
-        super(host, port, socketTimeout);
+    public ElectrumClientSubscribeConnection(InetSocketAddress address, NotificationHandler<T> notificationHandler, int socketTimeout) {
+        super(address, socketTimeout);
         this.notificationHandler = notificationHandler;
     }
 

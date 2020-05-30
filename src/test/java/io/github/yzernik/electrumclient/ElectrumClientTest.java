@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +32,8 @@ public class ElectrumClientTest {
 
     @Test
     public void getBlockHeader() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT, executorService);
+        InetSocketAddress address = new InetSocketAddress(ELECTRUM_HOST, ELECTRUM_PORT);
+        ElectrumClient electrumClient = new ElectrumClient(address, executorService);
         Future<GetHeaderResponse> responseFuture = electrumClient.getHeader(631515);
 
         GetHeaderResponse response = responseFuture.get();
@@ -49,7 +51,8 @@ public class ElectrumClientTest {
     public void subscribeBlockHeaders() throws Exception {
         BlockingQueue<SubscribeHeadersResponse> responsesQueue = new LinkedBlockingQueue<>();
 
-        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT, executorService);
+        InetSocketAddress address = new InetSocketAddress(ELECTRUM_HOST, ELECTRUM_PORT);
+        ElectrumClient electrumClient = new ElectrumClient(address, executorService);
         NotificationHandler<SubscribeHeadersResponse> notificationHandler =
                 notification -> {
             System.out.println("Handling notification in test: " + notification);
@@ -76,7 +79,8 @@ public class ElectrumClientTest {
 
     @Test
     public void testSubscribePeers() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT, executorService);
+        InetSocketAddress address = new InetSocketAddress(ELECTRUM_HOST, ELECTRUM_PORT);
+        ElectrumClient electrumClient = new ElectrumClient(address, executorService);
         Future<SubscribePeersResponse> responseFuture = electrumClient.subscribePeers();
 
         SubscribePeersResponse response = responseFuture.get();
@@ -87,7 +91,8 @@ public class ElectrumClientTest {
 
     @Test(expected = ExecutionException.class)
     public void getBlockHeaderBadServer() throws Exception {
-        ElectrumClient electrumClient = new ElectrumClient("foooooooo", ELECTRUM_PORT, executorService);
+        InetSocketAddress address = new InetSocketAddress("foooooooo", ELECTRUM_PORT);
+        ElectrumClient electrumClient = new ElectrumClient(address, executorService);
         Future<GetHeaderResponse> responseFuture = electrumClient.getHeader(0);
         responseFuture.get();
     }

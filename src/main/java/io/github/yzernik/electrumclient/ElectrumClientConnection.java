@@ -3,7 +3,7 @@ package io.github.yzernik.electrumclient;
 import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 
 import java.io.*;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 
@@ -11,17 +11,15 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements C
 
     private final static int DEFAULT_SOCKET_TIMEOUT = 0;
 
-    private final String host;
-    private final int port;
+    private final InetSocketAddress address;
     private int socketTimeout;
 
-    public ElectrumClientConnection(String host, int port) {
-        this(host, port, DEFAULT_SOCKET_TIMEOUT);
+    public ElectrumClientConnection(InetSocketAddress address) {
+        this(address, DEFAULT_SOCKET_TIMEOUT);
     }
 
-    public ElectrumClientConnection(String host, int port, int socketTimeout) {
-        this.host = host;
-        this.port = port;
+    public ElectrumClientConnection(InetSocketAddress address, int socketTimeout) {
+        this.address = address;
         this.socketTimeout = socketTimeout;
     }
 
@@ -31,9 +29,8 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements C
     }
 
     public T makeRequest() throws IOException, ElectrumRPCParseException {
-        InetAddress address = InetAddress.getByName(host);
         try(
-                Socket clientSocket = new Socket(address, port);
+                Socket clientSocket = new Socket(address.getAddress(), address.getPort());
                 OutputStream clientOutputStream = clientSocket.getOutputStream();
                 InputStream clientInputStream = clientSocket.getInputStream();
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientInputStream))

@@ -3,13 +3,16 @@ package io.github.yzernik.electrumclient;
 import io.github.yzernik.electrumclient.exceptions.ElectrumRPCParseException;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class SubscribeHeadersClientConnection extends ElectrumClientSubscribeConnection<SubscribeHeadersResponse> {
 
     private static final int DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT = 1800000;
 
-    public SubscribeHeadersClientConnection(String host, int port, NotificationHandler<SubscribeHeadersResponse> notificationHandler) {
-        super(host, port, notificationHandler, DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT);
+    public SubscribeHeadersClientConnection(InetSocketAddress address, NotificationHandler<SubscribeHeadersResponse> notificationHandler) {
+        super(address, notificationHandler, DEFAULT_SUBSCRIBE_HEADERS_SOCKET_TIMEOUT);
     }
 
     @Override

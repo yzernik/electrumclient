@@ -3,6 +3,8 @@ package io.github.yzernik.electrumclient.examples;
 import io.github.yzernik.electrumclient.ElectrumClient;
 import io.github.yzernik.electrumclient.subscribepeers.SubscribePeersResponse;
 
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,9 +16,10 @@ public class SubscribePeersExample {
     private static final String ELECTRUM_HOST = "electrumx-core.1209k.com";
     private static final int ELECTRUM_PORT = 50001;
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException, UnknownHostException {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        ElectrumClient electrumClient = new ElectrumClient(ELECTRUM_HOST, ELECTRUM_PORT, executorService);
+        InetSocketAddress address = new InetSocketAddress(ELECTRUM_HOST, ELECTRUM_PORT);
+        ElectrumClient electrumClient = new ElectrumClient(address, executorService);
         Future<SubscribePeersResponse> responseFuture = electrumClient.subscribePeers();
 
         SubscribePeersResponse response = responseFuture.get();
