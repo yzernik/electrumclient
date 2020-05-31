@@ -59,14 +59,10 @@ abstract class ElectrumClientConnection<T extends ElectrumResponse> implements C
 
     T getResponse(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
         String responseLine = in.readLine();
-        System.out.println("Got responseLine: " + responseLine);
         if (responseLine == null) {
             throw new ElectrumRPCParseException("Null response line.");
         }
-
         T responseItem = parseResponseLine(responseLine, electrumRPCClient);
-        System.out.println("Got responseItem: " + responseItem);
-
         return responseItem;
     }
 

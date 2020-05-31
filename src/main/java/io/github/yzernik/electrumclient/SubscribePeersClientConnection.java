@@ -19,7 +19,6 @@ public class SubscribePeersClientConnection extends ElectrumClientConnection<Sub
 
     @Override
     SubscribePeersResponse parseResponseLine(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException {
-        System.out.println("Got subscribe peers response line: " + line);
         return electrumRPCClient.parseSubscribePeersResult(line);
     }
 
