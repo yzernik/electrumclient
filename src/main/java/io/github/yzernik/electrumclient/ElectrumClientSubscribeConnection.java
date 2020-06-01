@@ -25,19 +25,15 @@ abstract public class ElectrumClientSubscribeConnection<T extends ElectrumRespon
     abstract T parseNotification(String line, ElectrumRPCClient electrumRPCClient) throws ElectrumRPCParseException;
 
     void handleNotifications(BufferedReader in, ElectrumRPCClient electrumRPCClient) throws IOException, ElectrumRPCParseException {
-        System.out.println("Handling notification lines...");
         String notificationLine = in.readLine();
         while (true) {
-            System.out.println("Handling notification line step 1: " + notificationLine);
             if (Thread.interrupted()) {
                 return;
             }
-            System.out.println("Handling notification line step 2: " + notificationLine);
             if (notificationLine == null) {
                 throw new ElectrumRPCParseException("Null notification line.");
             }
             T notification = parseNotification(notificationLine, electrumRPCClient);
-            System.out.println("Handling notification: " + notification);
             notificationHandler.handleNotification(notification);
             notificationLine = in.readLine();
         }
